@@ -1,0 +1,106 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Edit Customer";
+}
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+    <div class="page-header">
+        <h1>CUSTOMER <span>EDIT</span></h1>
+        <div class="page-header-actions">
+            <a  id="update-user" href="#" role="button" class=" btn btn-success btn-lg"><i class="fa fa-save"></i> Save </a>
+        </div>
+    </div>
+
+    <form id="editCustomerForm" action="#" method="post" class="row-fluid">
+        @Html.AntiForgeryToken()
+        <div class="col-xs-12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>View Customer</h5>
+                </div>
+                <div class="widget-content padding"></div>
+            </div>
+
+        </div>	
+    </form>
+</div>
+    </div>
+<script id="customerDetailsTemplate" type="text/html">
+    <div class="form-horizontal">
+    
+        <div class="form-group">
+            <label class="control-label col-xs-2">First Name</label>
+            <div class="controls col-xs-9">
+                <input name="FirstName" class="form-control form-value col-xs-12" value="{{FirstName}}" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-xs-2">Last Name</label>
+            <div class="controls col-xs-9">
+                <input name="LastName" class="form-control form-value col-xs-12" value="{{LastName}}" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-xs-2">Email</label>
+            <div class="controls col-xs-9">
+                <input name="Email" class="form-control form-value col-xs-12" value="{{Email}}" />
+            </div>
+        </div>
+                                    
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var customerForm = $('#editCustomerForm');
+            var message = $('.alert', customerForm);
+            var customer = new User();
+
+            // Show overlay
+            $('.widget-content', customerForm).form('overlay');
+
+
+            customer.subscribe(customer.MESSAGE_UPDATEPROFILE, function (resp) {
+                console.log(resp);
+                if(resp.Success == true) {
+                    $(".alert").addClass("alert-success").html("Customer Updated").show();
+                }
+                
+                if(resp.Success == false) {
+                    $(".alert").addClass("alert-danger").html(resp.Errors[0]).show();
+                }
+            });
+
+            customer.subscribe(customer.MESSAGE_RETRIEVED, function (resp) {
+                var html = Bitsie.Shop.Template('#customerDetailsTemplate', resp);
+                $('.widget-content', customerForm).html(html);
+                $('.widget-content', customerForm).form('overlay-hide');
+            });
+
+            $("#update-user").click(function(e) {
+                e.preventDefault();
+                var data = $("#editCustomerForm").serializeObject();
+                data.UserId = id;
+                customer.update(data);
+            });
+            
+            // Load user
+            customer.getOne(id);
+
+        }));
+    </script>
+} 

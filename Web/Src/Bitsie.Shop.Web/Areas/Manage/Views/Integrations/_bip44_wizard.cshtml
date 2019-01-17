@@ -1,0 +1,217 @@
+﻿
+
+
+
+     <!-- CREATE WALLET DIALOG -->
+<div id="create-wallet-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"><i class="fa fa-check"></i> WALLET CREATED</h4>
+            </div>
+            <div class="modal-body">
+                <p>Write down this passphrase to backup your wallet</p>
+                <div class="wallet-passphrase well">
+                    
+                </div>                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script id="settlementTemplate" type="text/html">
+
+    <div class="col-xs-12">
+        <div id="formWizard" class="wizard">
+            
+            <ul class="steps">  
+                <li data-step="1" class="active"></li>
+                <li data-step="2"></li>
+                <li data-step="3"></li>
+                <li data-step="4"></li>             
+            </ul>
+
+            <div class="actions">
+                 
+            </div>
+
+            <div class="step-content">
+                <div class="step-pane intro-step active" data-step="1">                    
+                    <!-- if they have a public master key, then just show the retrieve wallet button, and button to show the key -->
+                    {{#if PublicMasterKey}}
+                        <div class="text-center col-xs-7 col-xs-offset-2 ">
+
+                            {{#is PaymentMethod 6}}      
+                            {{#is walletType "Wallet32"}}
+                            <div class="well col-xs-6 col-xs-offset-3 ">                                                              
+                                <img class="col-xs-5" src="/Content/img/wallet32_logo.png" />
+                                <div class="col-xs-7">You currently have a wallet setup with Wallet 32</div>
+                            </div>
+                            {{/is}}
+                            {{/is}}
+
+                            {{#is PaymentMethod 5}}
+                            {{#is walletType "Trezor"}}
+                            <div class="well col-xs-6 col-xs-offset-3 alert alert-info">                                                              
+                                <img class="col-xs-5" src="/Content/img/trezor_logo.png" />
+                                <div class="col-xs-7">You currently have a wallet setup with Trezor</div>                                
+                            </div>
+                            {{/is}}
+                            {{/is}}
+                            <div class="col-xs-6 well col-xs-offset-3">
+
+                                {{#is PaymentMethod 5}}
+                                {{#is walletType "Trezor"}}                                                                          
+                                <a class="showPublicKey btn btn-info btn-block" href="#">Show Public Key</a>
+                                {{/is}}
+                                {{/is}}
+
+                                {{#is PaymentMethod 6}}
+                                {{#is walletType "Wallet32"}}                                                                          
+                                <a class="showPublicKey btn btn-info btn-block" href="#">Show Public Key</a>
+                                {{/is}}
+                                {{/is}}
+
+                                {{#if savedPassphrase}}                                                                           
+                                    <button  class="btn-block retrieveWalletStep btn btn-orange btn-default ">RETRIEVE WALLET</button>                                        
+                                {{/if}}
+
+                                {{#is walletType "Wallet32"}}
+                                <button  class="btn-block createWalletStep show-warning btn btn-default ">CREATE A NEW WALLET</button>  
+                                <button class="btn-block useExistingStep show-warning btn btn-default ">USE EXISTING</button>
+                                {{/is}}
+
+                                {{#is walletType "Trezor"}}
+                               {{#if PublicMasterKey}}
+                                <button  class="btn-block useExistingStep show-warning btn btn-default ">ENTER NEW TREZOR KEY</button>  
+                                {{else}}
+                                <button  class="btn-block useExistingStep show-warning btn btn-default ">ENTER TREZOR KEY</button>  
+                                {{/if}}
+                                {{/is}}
+                                                                                                                         
+                            </div>
+                            <input type="hidden" id="publicMasterKey" value="{{PublicMasterKey}}"/>                        
+                        </div>
+                        <div class="clearfix"></div>
+                    {{else}}
+                        <div class="text-center well col-xs-6 col-xs-offset-3">
+                            {{#is walletType "Wallet32"}}  
+                             <p>Create a wallet or use an existing Wallet32 wallet</p>
+                             <div class="col-xs-6 col-xs-offset-3">
+                                    <button  class="btn-block createWalletStep show-warning btn btn-default ">CREATE A NEW WALLET</button>  
+                                <button class="btn-block useExistingStep show-warning btn btn-default ">USE EXISTING</button>         
+                              </div>
+                            {{/is}}
+                            {{#is walletType "Trezor"}}  
+                            <div class="col-xs-6 col-xs-offset-3">
+                                     <button  class="btn-block useExistingStep show-warning btn btn-default ">ENTER TREZOR KEY</button>         
+                              </div>
+                            {{/is}}
+                        </div>                    
+                    {{/if}}
+                </div>
+
+                <div class="step-pane create-wallet-step" data-step="2">
+                    <div class="col-xs-12">
+                        <div class="create-wallet-alert alert alert-danger display-none col-xs-9 text-center"></div>
+                    </div>                                       
+                    <div class="text-center col-xs-5">
+                        <div class="well col-xs-12">
+                            <h2>CREATE A WALLET</h2>    
+                            <div class="col-xs-12 text-center">
+                                <p class="loadingbar display-none"><em>One moment...</em></p>
+                                
+                                <br />
+                            </div>                        
+                            <div class="col-xs-12">
+                                <a id="create-wallet-btn" data-role="button" data-loading-text="Loading..." autocomplete="off" type="button" class="btn btn-success btn-lg btn-block">Create Wallet</a>     
+                            </div>           
+                            <div class="col-xs-12 checkbox text-center">                                 
+                                <label>
+                                    <input type="checkbox" id="saveKey" name="saveKey"  /> Save encrypted key to server?
+                                </label>
+                            </div>
+                            <div class="col-xs-12 password-entry well white-well display-none text-center">
+                                <p><em>Enter a password, then click the "Create Wallet Button".</em></p>
+                                <div class="form-group col-xs-12 text-left">
+                                    <label class="col-xs-3 control-label">Password</label>
+                                    <div class="col-xs-9">
+                                        <input id="secretPassword" class="form-control text-left" type="password" value=""/>
+                                    </div>                                 
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>                                      
+                    </div>        
+                    <div class="col-xs-4 alert alert-notice">
+                        <h2>Notice</h2>
+                       When creating a wallet you may choose to save an encrypted passphrase to Bitsie Shop, which you then can retrieve later with the same password. If you choose to not save a password, then you will be shown your passphrase once to copy down, import into your Wallet32 app and store in a safe place. Once you close the passphrase window, it will be removed and you will not be able to retrieve it from Bitsie.
+                    </div>                    
+                </div>
+
+                <div class="step-pane" data-step="3">
+
+                     <div class="col-xs-12">
+                        <div class="create-wallet-alert alert alert-danger display-none col-xs-9 text-center"></div>
+                    </div>                                       
+                    <div class="text-center col-xs-6 col-xs-offset-3">
+                        <div class="well col-xs-12">
+                             <h2>USE EXISTING WALLET</h2>  
+                            <div class="col-xs-12">
+                                    <p>Enter in your public master key and click "Save".</p>
+                                    <div class="use-existing-alert alert alert-danger display-none"></div>
+                                    <div class="form-group well white-well">
+                                        <div class="input-group">
+                                            <label class="col-xs-5 text-right control-label">BIP32 Master Public Key</label>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" id="existing-key" name="MasterPublicKey" value="{{MasterPublicKey}}" type="text" placeholder="Your BIP32 master public key" />
+                                            </div>
+                                             <div class="col-xs-1">
+                                                <button id="save-existing-wallet-btn" class="btn btn-success">Save</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="step-pane" data-step="4">                
+                        <div class="col-xs-12 get-wallet">
+                                <div class="col-xs-12 step-header">
+                                <a href="#" class="stepBack"><i class="fa fa-chevron-left"></i></a>
+                                <h2>Retrieve Wallet</h2>
+                        </div>
+                       
+                        <p>Enter in your password and then select "Retrieve Wallet"</p>
+                        <div class="form-group well col-xs-6">
+                            <label class="col-xs-2 control-label text-right">Password</label>
+                            <div class="col-xs-4">
+                                <input id="decrypt-password" name="decrypt-password" class="form-control" type="password" value=""/>
+                            </div>
+                            <div class="col-xs-3">
+                                 <a href="#" id="retrieve-wallet-btn" class="btn btn-success">Retrieve Wallet</a>    
+                            </div>             
+                            <div class="clearfix"></div>
+                        </div>
+                              
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>       
+
+     
+</script>
+

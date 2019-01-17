@@ -1,0 +1,115 @@
+@sidebar: #ececec;
+@highlight:#333;
+@highlight-2:#3F3F3F;
+@highlight-3:#555555;
+@shadow:#222222;
+@shadow-2:#2A2A2A;
+@border-light:#4E4E4E;
+@border-dark:#393939;
+
+/*
+ * Brand Theme
+ */
+body {
+	background-color: #fff;
+}
+
+#header {
+    box-shadow: 0 1px 0 @highlight;
+	background-color: @highlight;
+    background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(@highlight-2), to(@shadow));
+    background-image: -webkit-linear-gradient(top, @highlight-2 0%, @shadow 100%);
+    background-image: -moz-linear-gradient(top, @highlight-2 0%, @shadow 100%);
+	background-image: -ms-linear-gradient(top, @highlight-2 0%, @shadow 100%);
+	background-image: -o-linear-gradient(top, @highlight-2 0%, @shadow 100%);
+	background-image: linear-gradient(top, @highlight-2 0%, @shadow 100%);
+    border-bottom: 1px solid @highlight-3;
+}
+
+#search input[type=text], #search button {
+	background-color: @shadow;
+}
+#search input[type=text]:focus {
+	color: #777777;
+}
+
+#sidebar > ul {
+	border-top: 1px solid @border-dark;
+	border-bottom: 1px solid @border-light;
+}
+#sidebar > ul > li {
+	border-top: 1px solid @border-light;
+	border-bottom: 1px solid @border-dark;
+}
+#sidebar > ul > li.active {
+    background-color: #3a3a3a;
+	background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(@highlight), to(@highlight-2));
+	background-image: -webkit-linear-gradient(top, @highlight 0%, @highlight-2 100%);
+	background-image: -moz-linear-gradient(top, @highlight 0%, @highlight-2 100%);
+	background-image: -ms-linear-gradient(top, @highlight 0%, @highlight-2 100%);
+	background-image: -o-linear-gradient(top, @highlight 0%, @highlight-2 100%);
+	background-image: linear-gradient(top, @highlight 0%, @highlight-2 100%);
+}
+
+#sidebar > ul > li.open.submenu > a {
+	border-bottom: 1px solid @border-dark;
+}
+#sidebar > ul > li.open.active.submenu > a {
+	border-bottom: 1px solid @shadow-2;
+}
+#sidebar > ul > li > a > .label {
+	background-color: @highlight;
+}
+#sidebar > ul > li > a:hover {
+	background-color: #4A4A4A;
+}
+#sidebar > ul ul {
+	border-top: 1px solid @border-light;
+	background-color: @shadow-2;
+}
+#sidebar > ul ul li a {
+	border-top: 1px solid @highlight;
+	border-bottom: 1px solid #202020;
+}
+#sidebar > ul ul li a:hover, #sidebar > ul ul li.active a {
+	color: #CCCCCC;
+	background-color: #272727;
+}
+
+.dropdown-menu li a:hover, .dropdown-menu .active a, .dropdown-menu .active a:hover {
+    color: #eeeeee;
+	background-color: @sidebar;
+    background-image: -webkit-gradient(linear, 0 0%, 0 100%, @highlight-3, @shadow);
+    background-image: -webkit-linear-gradient(top, @highlight-3 0%, @shadow 100%);
+    background-image: -moz-linear-gradient(top, @highlight-3 0%, @shadow 100%);
+    background-image: -ms-linear-gradient(top, @highlight-3 0%, @shadow 100%);
+    background-image: -o-linear-gradient(top, @highlight-3 0%, @shadow 100%);
+    background-image: linear-gradient(top, @highlight-3 0%, @shadow 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='@highlight-3', endColorstr='@shadow',GradientType=0 ); /* IE6-9 */
+}
+
+@media (max-width: 480px) {
+	#sidebar > a {
+		background-image: -moz-linear-gradient(top, #464646 0%, #404040 100%);
+		border-bottom: 1px solid #6e6e6e;
+	}
+	#sidebar > ul {
+		background-color: @sidebar;
+	}
+}
+@media (min-width: 481px) and (max-width: 767px) {
+	#sidebar > ul ul:before {
+		border-right: 7px solid rgba(0, 0, 0, 0.2);
+	}
+	#sidebar > ul ul:after {
+		border-right: 6px solid @shadow;
+    }
+}
+
+.nav-stacked>li+li {
+    background:@sidebar;
+}
+
+.glyphicon {
+    color:#333;
+}

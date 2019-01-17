@@ -1,0 +1,17 @@
+@{
+    ViewBag.Title = "Checkout Disabled";
+}
+
+<div class="page @if (Model.IsMobile){<text>mobile-merchant span12</text>}">
+    <div class="panel container-full background-white merchant-header">
+        <div class="screen-title">
+            <h1 class="default-merchant-header">CHECKOUT DISABLED</h1>  
+            <form action="#">
+                <p>This merchant's checkout page has been disabled.</p>
+                
+                <p>If you are the owner of this account, ensure you have selected a settlement method in your account settings. 
+                    If you need assistance please contact <a href="mailto:support@bitsie.com">support@bitsie.com</a>.</p>
+            </form>
+        </div>
+    </div>
+</div>

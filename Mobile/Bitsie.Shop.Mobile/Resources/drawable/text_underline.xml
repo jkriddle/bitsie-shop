@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<StackPanel Height="100" Background="yellow" Width="100"   Name="root" xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+<Line Stroke="red" X1="0" Y1="25" X2="{Binding ElementName=root, Path=Width}" Y2="25" />
+
+</StackPanel>
+

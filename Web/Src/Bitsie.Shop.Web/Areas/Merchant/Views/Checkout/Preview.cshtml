@@ -1,0 +1,42 @@
+@using Bitsie.Shop.Domain
+@model Bitsie.Shop.Web.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+}
+
+<div class="page @if (Model.IsMobile){<text>mobile-merchant span12</text>}">
+
+    @Html.Partial("_Header")
+
+    <div class="qrcode-wrapper">
+        
+        <div class="bitcoin-qrcode"></div>
+				
+        <a class="bitcoin-link" href="bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+            1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+        </a>
+
+        <p class="alert-danger">This is only a sample. Do not send bitcoin to this address.</p>
+        
+        <div class="checkout-total">
+            <h4>total</h4>
+            <h3 class="total-usd">$20.00</h3>
+            <h5 id="total-btc">0.001 BTC</h5>
+        </div>
+        
+        <div class="clearfix"></div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var data = encodeURI('bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa');
+        $('.bitcoin-qrcode').qrcode({
+            text: data,
+            width: 220,
+            height: 220
+        });
+    });
+</script>

@@ -1,0 +1,176 @@
+@model Bitsie.Shop.Domain.User
+@{
+   
+    ViewBag.Title = "Offline Addresses";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Offline Addresses <span></span></h1>
+        </div>
+
+
+        <div class="col-xs-12">
+            <form id="offlineForm">
+        
+                    <div class="col-xs-12">
+                        <div class="alert display-none"></div>
+
+
+                        <p>Offline address may be used to receive customer payments or tips even if you don't have a mobile device available.
+                            Print and present this card to customers during checkout, and you will receive an email and/or text message notification 
+                            when a payment is received. <a href="/page/view/offlineaddresses" target="_blank">Read more</a></p>
+            
+                        <div class="widget-form"></div>
+                
+                    </div>	
+        
+            </form>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="offlineTemplate">
+    <div class="form form-horizontal">
+        <div class="control-group">
+            <table id="offline-addresses" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Email Notifications</th>
+                        <th>Text Message Notifications</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><a id="offline-add" href="#" class="btn btn-success">New Address</a></td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {{#OfflineAddresses}}
+                        <tr>
+                            <td>
+                                <input class="offline-address form-control" name="OfflineAddress" type="text" value="{{Address}}" readonly="readonly" />
+                            </td>
+                            <td><input class="tags" name="OfflineEmail" type="text" value="{{EmailNotifications}}" placeholder="Enter an email address..." /></td>
+                            <td><input class="tags" name="OfflinePhone" type="text" value="{{TextNotifications}}" placeholder="Enter a valid phone number..." /></td>
+                            <td>
+                                <a href="/Manage/Offline/Print?address={{Address}}" class="offline-print"><i class="glyphicon glyphicon-print" /></a>
+                                <a href="#{{Id}}" class="offline-delete"><span class="glyphicon glyphicon-remove"></span></a>
+                            </td>
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td colspan="4">
+                                You do not have any offline addresses yet.
+                            </td>
+                        </tr>
+                    {{/OfflineAddresses}}
+                </tbody>
+            </table>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</script>
+
+<script type="text/html" id="offlineRowTemplate">
+    <tr>
+        <td><input class="offline-address form-control" name="OfflineAddress" type="text" value="{{Address}}" readonly="readonly" placeholder="New address will be generated." /></td>
+        <td><input class="tags" name="OfflineEmail" type="text" value="{{EmailNotifications}}" placeholder="Enter an email address..." /></td>
+        <td><input class="tags" name="OfflinePhone" type="text" value="{{TextNotifications}}" placeholder="Enter a valid cell phone number..." /></td>
+    </tr>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var id = Bitsie.Shop.QueryString.id;
+            var form = $('#offlineForm');
+            var message = $('.alert', form);
+            var user = new User();
+
+            if (Bitsie.Shop.QueryString.updated) {
+                message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Offline addresses have been saved.').fadeIn();
+            }
+
+            // Show overlay
+            $('.widget-form', form).form('overlay');
+
+            function displayForm(resp) {
+                var html = Bitsie.Shop.Template('#offlineTemplate', resp);
+                $('.widget-form', form).html(html);
+                $('.widget-form', form).form('overlay-hide');
+                enableTags('table tr :not(td:first-child) input');
+            }
+
+            user.subscribe(user.ADDRESSES_LIST, function (resp) {
+                displayForm(resp);
+            });
+
+            // Load user
+            user.getOfflineAddresses(id);
+
+            function enableTags(el) {
+                $(el).tagsInput({
+                    height: '30px',
+                    defaultText: ''
+                });
+            }
+
+            form.on('click', '#offline-add', function (e) {
+                e.preventDefault();
+                var html = Bitsie.Shop.Template('#offlineRowTemplate', {});
+                $('#offline-addresses tbody').append(html);
+                enableTags('.tags:last-child');
+            });
+
+            form.on('click', '.offline-delete', function (e) {
+                e.preventDefault();
+                var id = this.hash.slice(1);
+                Bitsie.Shop.Api.post('/Api/OfflineAddress/Delete/' + id, null, function (resp) {
+                    if (resp.Success) {
+                        message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Offline address has been removed.').fadeIn();
+                    } else {
+                        message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                    displayForm(resp);
+                    Bitsie.Shop.scrollTo(0);
+                });
+            });
+
+            form.on('click', '.offline-print', function (e) {
+                e.preventDefault();
+                var printWindow = window.open(this.href, '', 'width=500,height=600');
+                printWindow.focus();
+                printWindow.print();
+            });
+
+            // Submit form
+            form.submit(function (e) {
+                e.preventDefault();
+                form.form('disable');
+                var formData = form.serializeObject();
+                Bitsie.Shop.Api.post('/Api/OfflineAddress/Update', formData, function (resp) {
+                    if (resp.Success) {
+                        message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Offline addresses have been saved.').fadeIn();
+                    } else {
+                        message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                    displayForm(resp);
+                    Bitsie.Shop.scrollTo(0);
+                    form.form('enable');
+                });
+            });
+
+        }));
+    </script>
+} 

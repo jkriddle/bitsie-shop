@@ -1,0 +1,13 @@
+﻿
+<h2>Invoice {{InvoiceNumber}}</h2>
+<p>{{Merchant.Company.Name}}<br/>
+    {{Merchant.Company.Street}} {{Merchant.Company.Street2}}<br/>
+    {{Merchant.Company.City}}, {{Merchant.Company.State}} {{Merchant.Company.Zip}}
+</p>
+<hr/>
+<div style="background: #ececec; color: #333; padding: 20px 0; text-align: center">
+    <h2>Amount: {{USDAmount}}</h2>
+</div>
+    
+
+<a href="http://shop.bitsie.com/{{Merchant.MerchantId}}/Checkout?invoice={{InvoiceGuid}}" style="text-decoration: none; width: 100%; display: block; color: white; text-transform: uppercase; font-size: 1.5em; text-align: center; background: #f7931a; padding: 10px 0;">View Invoice</a>

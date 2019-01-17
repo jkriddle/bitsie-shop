@@ -1,0 +1,32 @@
+<p>An ACH payment totalling {{Payout.PayoutAmount}} has been initiated to a customer's bank account for the orders listed below.</p>
+
+
+<table cellpadding="5" cellspacing="0" border="1">
+    <tr>
+        <th>Order Date</th>
+        <th>Order Number</th>
+        <th>Amount</th>
+    </tr>
+    {{#each Orders}}
+    <tr>
+        <td>{{LocalOrderDate}}</td>
+        <td>{{OrderNumber}}</td>
+        <td>{{Total:C}}</td>
+    </tr>
+    {{/each}}
+    <tr>
+        <td colspan="2"><strong>Subtotal</strong></td>
+        <td><strong>{{Total:C}}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="2">ACH Fee (1%)</td>
+        <td>{{Payout.PayoutFee:C}}</td>
+    </tr>
+    <tr>
+        <td colspan="2"><strong>Total Payout</strong></td>
+        <td><strong>{{Payout.PayoutAmount:C}}</strong>
+    </tr>
+</table>
+
+<p>Confirmation Number: {{Payout.ConfirmationNumber}}</p>
+

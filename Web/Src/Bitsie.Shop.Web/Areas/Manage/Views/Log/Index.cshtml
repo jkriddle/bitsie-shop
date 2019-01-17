@@ -1,0 +1,181 @@
+@{
+   
+    ViewBag.Title = "Manage Logs";
+}
+
+<div id="content-header">
+    <h1>Logs</h1>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>Logs</h5>
+                    <div class="table-length">
+                        <label>Show 
+                            <select size="1">
+                                <option value="10" selected="selected">10</option>
+                                <option value="25">25</option><option value="50">50</option>
+                                <option value="100">100</option>
+                            </select> 
+                            entries</label>
+                    </div>
+                </div>
+
+                <div class="widget-content nopadding">
+                    <div id="logTable" class="table-wrapper table-datatable" role="grid">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2"><a href="#Id">ID</a></th>
+                                    <th class="col-md-3"><a href="#LogDate">Date</a></th>
+                                    <th><a href="#Message">Message</a></th>
+                                    <th><a href="#Level">Level</a></th>
+                                    <th><a href="#Category">Category</a></th>
+                                    <th class="col-md-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7"><img src="@Url.Content("~/Content/img/spinner.gif")" /> Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>  
+
+                        <div class="ui-toolbar ui-widget-header">
+                            <div class="table-filter input-append col-xs-6">
+                                <input class="searchTerm form-control col-xs-4 pull-left" type="text">
+                                <button type="submit" class="btn pull-left">Search</button> 
+                                <a type="button" class="advanced btn pull-left" href="#">Advanced</a>
+                                <a class="export btn pull-left" href="#">Export</a>
+                            </div>
+                            <div class="table-pager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>	
+        </div>
+    </div>
+</div>
+
+<script id="searchTemplate" type="text/html">
+    <h4>Advanced Search</h4>
+    <form class="form-horizontal form-modal">
+        <div class="control-group">
+            <label class="control-label">Log Date</label>
+            <div class="controls">
+                <input class="input-small date-range" name="LogDateRange" type="text" value="{{LogDateRange}}" />
+                <input type="hidden" name="StartDate" value="{{StartDate}}" />
+                <input type="hidden" name="EndDate" value="{{EndDate}}" />
+                <i class="icon-inline icon-calendar"></i>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Category</label>
+            <div class="controls">
+                {{> logCategoryList}}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Level</label>
+            <div class="controls">
+                {{> logLevelList}}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">User</label>
+            <div class="controls">
+                <input id="userSearch" name="Email" type="text" value="{{Email}}" />
+                <input type="hidden" name="UserId" value="{{UserId}}" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Message</label>
+            <div class="controls">
+                <input type="text" name="Message" value="{{Message}}" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Detail</label>
+            <div class="controls">
+                <input type="text" name="Details" value="{{Details}}" />
+            </div>
+        </div>
+    </form>
+</script>
+
+<script id="logRowTemplate" type="text/html">
+    {{#Logs}}
+    <tr class="log-row-{{LogId}}">
+        <td>{{LogId}}</td>
+        <td>{{LogDate}}</td>
+        <td class="td-break">{{Message}}</td>
+        <td>{{Level}}</td>
+        <td>{{Category}}</td>
+        <td class="align-center">
+            <a href="@Url.Action("Details", "Log")?id={{LogId}}"><i class="icon-search" /></a>
+        </td>
+    </tr>  
+    {{/Logs}}
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var logFilter = new SearchFilter();
+            var log = new Log();
+            var logTable = $('#logTable');
+
+            // Log list rendering
+            log.subscribe(log.MESSAGE_LIST, function (resp) {
+                if (resp.Logs.length > 0) {
+                    var html = Bitsie.Shop.Template('#logRowTemplate', resp);
+                    $('tbody', logTable).html(html);
+                    dataTable.update(resp.CurrentPage, resp.NumPages);
+                } else {
+                    dataTable.empty('No logs found.');
+                }
+            });
+
+            // Init table
+            var dataTable = new DataTable(logTable, logFilter, log, function () {
+                // Advances search displayed
+                $("#userSearch").autocomplete({
+                    source: function (term, callback) {
+                        Bitsie.Shop.Api.get("/Api/User/Get", { SearchTerm: term.term, NumPerPage: 8 }, function (resp) {
+                            var data = $.map(resp.Users, function (u) {
+                                return {
+                                    label: u.Email,
+                                    value: u.UserId
+                                };
+                            });
+                            callback(data);
+                        });
+                    },
+                    minLength: 2,
+                    select: function (event, ui) {
+                        $(this).val(ui.item.label);
+                        $("input[name='UserId']").val(ui.item.value);
+                        return false;
+                    }
+                });
+                
+                $('.date-range').daterangepicker({
+                    ranges: Bitsie.Shop.Config.dateRanges
+                },
+                function (start, end) {
+                    $('.modal input[name="StartDate"]').val(start.format("YYYY-MM-DD"));
+                    $('.modal input[name="EndDate"]').val(end.format("YYYY-MM-DD"));
+                    console.log(logFilter);
+                });
+
+            });
+        }));
+    </script>
+} 

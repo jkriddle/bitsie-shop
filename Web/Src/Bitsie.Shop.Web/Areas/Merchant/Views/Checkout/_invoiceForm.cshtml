@@ -1,0 +1,61 @@
+﻿@using Bitsie.Shop.Domain
+@{
+    ViewBag.Title = "Invoice";
+}
+
+<script id="invoiceTemplate" type="text/html">
+    <div id="invoice-form">
+        <div class="form-group">
+            <h3>INVOICE @Model.Invoice.InvoiceNumber</h3>
+        </div>
+               
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Quanitity</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Subtotal</th>    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(InvoiceItem invoiceItem in Model.Invoice.InvoiceItem)
+                {
+                    <tr>
+                        <td>@invoiceItem.Quantity</td>
+                        <td>@invoiceItem.Description</td>
+                        <td>$@Math.Round(@invoiceItem.UsdAmount,2)</td>
+                        <td>$@Math.Round((invoiceItem.UsdAmount * invoiceItem.Quantity), 2)</td>                            
+                    </tr>
+                }
+                        
+                    
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan=3 class="text-right">TOTAL: </td>
+                    <td colspan=1>$@Math.Round(Model.Invoice.USDAmount, 2)</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="form-group">
+            <h3><span>Amount </span>: $@Math.Round(Model.Invoice.USDAmount, 2)</h3>
+            <input class="form-control number" name="Subtotal" type="hidden" value="@if (Model.Invoice != null){@Math.Round(Model.Invoice.USDAmount, 2);}" required placeholder="Amount (in USD) to pay" />
+        </div>
+
+        @if (!String.IsNullOrEmpty(Model.Invoice.InvoiceDescription)) {
+            <hr/>
+            <div class="form-group">
+                <label class="control-label">Reference/Description</label>
+                <p>@Model.Invoice.InvoiceDescription</p>
+            </div>
+        }
+
+        <hr/>
+        <div class="form-group">
+            <button id="continue" type="submit" class="btn btn-primary">Continue &raquo;</button>
+        </div>
+    </div>
+</script>

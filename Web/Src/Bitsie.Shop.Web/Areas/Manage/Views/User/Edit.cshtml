@@ -1,0 +1,280 @@
+@using Bitsie.Shop.Domain
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Manage Users";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Account <span>PROFILE</span> </h1>
+        </div>
+
+    <form id="editUserForm" action="#" method="post" class="row-fluid">
+        <div class="col-xs-12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>Edit Profile</h5>
+                </div>
+                <div class="widget-content nopadding">
+                </div>
+            </div>
+
+        </div>	
+    </form>
+</div>
+</div>
+<script id="editUserTemplate" type="text/html">
+    <ul id="profile-tabs" class="nav nav-tabs">
+        <li><a href="#tab-info" data-toggle="tab">My Info</a></li>
+        <li><a href="#tab-business" data-toggle="tab">Business Info</a></li>
+        <li><a href="#tab-subscription" data-toggle="tab">Subscription</a></li>
+    </ul>
+
+    <div class="form-horizontal">
+        <input type="hidden" name="UserId" value="{{UserId}}" />
+
+        <div class="tab-content">
+
+            <div id="tab-info" class="tab-pane">
+                
+                <div class="form-group">
+                    <label class="col-md-2 control-label">URL</label>
+                    <div class="col-md-9">
+                        <span id="merchantIdPre" class="control-text">@DomainHelper.AbsoluteUrl("/checkout")/</span><input type="text" class="form-control" id="merchantId" name="MerchantId" value="{{MerchantId}}" /> 
+                        <a class="control-text view" href="#" target="_blank">View</a>
+                    </div>
+                </div>
+        
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Email</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Email" type="email" placeholder="Email address" value="{{Email}}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Password</label>
+                    <div class="col-md-9 form-inline">
+                        <input name="Password" type="password" class="inline form-control" placeholder="Password">
+                        <input name="ConfirmPassword" type="password" class="inline form-control" placeholder="Confirm password">
+                        <span class="help-block">Leave blank to keep current password.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Phone</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Phone" type="text" placeholder="" value="{{Phone}}">
+                    </div>
+                </div>
+                @if (User.IsInRole(Role.Administrator.GetDescription()))
+                {
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Role</label>
+                        <div class="col-md-9">
+                           {{> roleList}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Status</label>
+                        <div class="col-md-9">
+                           <select name="Status">
+                               <option {{#is Status "@((int)Bitsie.Shop.Domain.UserStatus.Pending)"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.UserStatus.Pending">Pending</option>
+                               <option {{#is Status "@((int)Bitsie.Shop.Domain.UserStatus.AwaitingApproval)"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.UserStatus.AwaitingApproval">Awaiting Approval</option>
+                               <option {{#is Status "@((int)Bitsie.Shop.Domain.UserStatus.Active)"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.UserStatus.Active">Active</option>
+                               <option {{#is Status "@((int)Bitsie.Shop.Domain.UserStatus.Suspended)"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.UserStatus.Suspended">Suspended</option>
+                           </select>
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Enable Gratuity?</label>
+                    <div class="col-md-9">
+                        <label><input type="radio" name="EnableGratuity" value="true" {{#EnableGratuity}}checked="checked"{{/EnableGratuity}} /> Yes</label>
+                        <label><input type="radio" name="EnableGratuity" value="false" {{^EnableGratuity}}checked="checked"{{/EnableGratuity}} /> No</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="tab-business" class="tab-pane">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Company Name</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="CompanyName" type="text" placeholder="" value="{{CompanyName}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Address</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Street" type="text" placeholder="" value="{{Street}}">
+                        <input class="form-control" name="Street2" type="text" placeholder="" value="{{Street2}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">City</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="City" type="text" placeholder="" value="{{City}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">State</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="State" type="text" placeholder="" value="{{State}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Zip</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Zip" type="text" placeholder="" value="{{Zip}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Industry</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Industry" type="text" placeholder="" value="{{Industry}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Website</label>
+                    <div class="col-md-9">
+                        <input class="form-control" name="Website" type="text" placeholder="" value="{{Website}}">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-subscription" class="tab-pane">
+                
+                
+                @if (User.IsInRole(Role.Administrator.GetDescription()))
+                {
+                    
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Subscription Type</label>
+                        <div class="col-md-9">
+                            <select name="SubscriptionType" class="form-control">
+                                <option value="">None</option>
+                                <option {{#is SubscriptionType "===" "@Bitsie.Shop.Domain.SubscriptionType.Basic"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.SubscriptionType.Basic">@Bitsie.Shop.Domain.SubscriptionType.Basic</option>
+                                <option {{#is SubscriptionType "===" "@Bitsie.Shop.Domain.SubscriptionType.Premium"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.SubscriptionType.Premium">@Bitsie.Shop.Domain.SubscriptionType.Premium</option>
+                                <option {{#is SubscriptionType "===" "@Bitsie.Shop.Domain.SubscriptionType.Unlimited"}}selected="selected"{{/is}} value="@Bitsie.Shop.Domain.SubscriptionType.Unlimited">@Bitsie.Shop.Domain.SubscriptionType.Unlimited</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Expires</label>
+                        <div class="col-md-9">
+                            <input type="date" name="SubscriptionDateExpires" class="form-control" value="{{toDate SubscriptionDateExpires}}" />
+                        </div>
+                    </div>
+                    
+                } else {
+                    
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Subscription Type</label>
+                        <div class="col-md-9">
+                            <span class="control-text">{{SubscriptionType}} <a class="subscription-upgrade btn btn-sm btn-success" href="/#pricing">Renew/Upgrade</a></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Expires</label>
+                        <div class="col-md-9">
+                            <span class="control-text">{{toUsDate SubscriptionDateExpires}}</span>
+                        </div>
+                    </div>
+                }
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label"># Transactions</label>
+                    <div class="col-md-9">
+                        <span class="control-text">
+                            {{#is SubscriptionType "===" "@Bitsie.Shop.Domain.SubscriptionType.Unlimited"}}Unlimited{{else}}{{NumTransactions}}{{/is}}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label"></label>
+            <div class="col-md-9">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var userForm = $('#editUserForm');
+            var message = $('.alert', userForm);
+            var user = new User();
+            var userData = null;
+
+            if (Bitsie.Shop.QueryString.updated) {
+                message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Profile has been saved.').fadeIn();
+            }
+
+            function enableTabs() {
+                $('#profile-tabs a:first').tab('show');
+                $('#profile-tabs a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
+            }
+
+            userForm.on('click', '.view', function (e) {
+                $(this).attr("href", '/' + $('#merchantId').val() + '/checkout');
+            });
+
+            // Show overlay
+            $('.widget-content', userForm).form('overlay');
+            
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#editUserTemplate', resp);
+                $('.widget-content', userForm).html(html);
+                $('.widget-content', userForm).form('overlay-hide');
+                enableTabs();
+            });
+            
+            user.subscribe(user.MESSAGE_UPDATEPROFILE, function (resp) {
+                if (resp.Success) {
+                    message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Profile has been saved.').fadeIn();
+                } else {
+                    message.hide().removeClass('alert-success')
+                    .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                }
+                Bitsie.Shop.scrollTo(0);
+                userForm.form('enable');
+            });
+
+            // Load user
+            user.getSecure(id);
+
+            // Submit form
+            userForm.submit(function (e) {
+                e.preventDefault();
+                userForm.form('disable');
+                var formData = userForm.serializeObject();
+                formData.Type = "profile";
+                user.update(formData);
+            });
+
+        }));
+    </script>
+} 

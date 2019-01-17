@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitsie.Shop.Data", "Bitsie.Shop.Data\Bitsie.Shop.Data.csproj", "{7507A34D-44ED-473A-B270-77B42CAC5A01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitsie.Shop.Common", "Bitsie.Shop.Common\Bitsie.Shop.Common.csproj", "{C72B7525-0469-498A-AC22-9E8B2489BB85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitsie.Shop.Services", "Bitsie.Shop.Services\Bitsie.Shop.Services.csproj", "{EEAA24AD-C86C-4045-A17B-A245D61C81ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitsie.Shop.Infrastructure", "Bitsie.Shop.Infrastructure\Bitsie.Shop.Infrastructure.csproj", "{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitsie.Shop.Mobile", "Bitsie.Shop.Mobile\Bitsie.Shop.Mobile.csproj", "{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7507A34D-44ED-473A-B270-77B42CAC5A01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7507A34D-44ED-473A-B270-77B42CAC5A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7507A34D-44ED-473A-B270-77B42CAC5A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7507A34D-44ED-473A-B270-77B42CAC5A01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C72B7525-0469-498A-AC22-9E8B2489BB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C72B7525-0469-498A-AC22-9E8B2489BB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C72B7525-0469-498A-AC22-9E8B2489BB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C72B7525-0469-498A-AC22-9E8B2489BB85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEAA24AD-C86C-4045-A17B-A245D61C81ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEAA24AD-C86C-4045-A17B-A245D61C81ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEAA24AD-C86C-4045-A17B-A245D61C81ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEAA24AD-C86C-4045-A17B-A245D61C81ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Bitsie.Shop.Mobile\Bitsie.Shop.Mobile.csproj
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,177 @@
+@{
+   
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<form id="signInForm" class="form-signin">
+    <h2 class="form-signin-heading">Please sign in</h2>
+
+    <div class="alert alert-danger display-none"></div>
+
+    <input type="text" class="input-block-level" placeholder="Email address" name="Email" />
+    <input type="password" class="input-block-level" placeholder="Password" name="Password" />
+   
+    <div class="col-xs-12 well sign-in-box">
+        <button class="btn btn-large btn-success pull-right" type="submit">Sign in <i class="fa fa-chevron-right"></i></button> 
+    </div>
+     <div class="row">
+        <div class="col-xs-6">
+            <label class="checkbox">
+                <input type="checkbox" value="true" name="RememberMe" /> <small>Remember me</small>
+            </label>
+        </div>
+        <div class="col-xs-6">
+             <a class="btn btn-link btn-cancel" href="#">Forgot Password?</a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</form>
+
+<form id="forgotForm" class="form-signin display-none">
+    <h3 class="form-signin-heading">Forgot your password?</h3>
+    
+    <div class="alert alert-danger display-none"></div>
+    
+    <p>Enter your email address and we will send you instructions on resetting your password.</p>
+
+    <input type="text" class="input-block-level" placeholder="Email address" name="Email" />
+    <button class="btn btn-large btn-primary pull-right" type="submit">Reset Password</button> 
+    <a class="btn btn-link btn-cancel" href="#">&laquo; Back to Login</a>
+    <div class="clearfix"></div>
+</form>
+
+<div style="margin-bottom:360px"></div>
+
+@section scripts {
+
+    <script type="text/javascript" src="~/Content/js/plugins/hashcash/jquery.hashcash.io.min.js""></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/js/plugins/hashcash/jquery.hashcash.io.min.css">
+
+
+    <script type="text/javascript">
+        ($(function () {
+
+            var message = '@ViewBag.Message';
+            var form = $('#signInForm');
+            var alertPanel = $('.alert', form);
+            
+            var forgotForm = $('#forgotForm');
+            var forgotAlert = $('.alert', forgotForm);
+            var user = new User();
+
+            function getMessage(code) {
+                var message = null;
+                switch (code) {
+                    case "AuthFail1":
+                        message = "Authentication failed, check your email and password and try again.";
+                        break;
+                    case "AuthFail2":
+                        message = "Please unlock submit button.";
+                        break;
+                    case "AuthFail3":
+                        message = "please try again or contact support.";
+                        break;
+                    case "AuthFail4":
+                        message = "Your account is pending approval.";
+                        break;
+                    case "SignedOut":
+                        message = "You are now signed out.";
+                        break;
+                    default:
+                        message = "Authorization Failed. Please try again or contact support.";
+                        break;
+                }
+                return message;
+            }
+
+            if (Bitsie.Shop.QueryString.message) {
+                alertPanel.hide().html(getMessage(Bitsie.Shop.QueryString.message)).removeClass('alert-info').addClass('alert-danger').fadeIn();
+            }
+            
+            // Login success
+            user.subscribe(user.MESSAGE_SIGNIN, function (resp) {
+                if (resp.Success) {
+                    var redirect = Bitsie.Shop.QueryString.ReturnUrl || '@Url.Action("Index", "Dashboard", new { @area="Manage"})';
+                    if (resp.User.Role == '@Bitsie.Shop.Domain.Role.Tipsie') {
+                        redirect = Bitsie.Shop.QueryString.ReturnUrl
+                        || '@Url.Action("Dashboard", "Tipsie")';
+                    }
+                    window.location.href = redirect;
+                } else {
+
+                    var message = getMessage(resp.Errors[0]);
+                    form.form('enable');
+                    setForm();
+                    alertPanel.hide().html(message).removeClass('alert-info').addClass('alert-danger').fadeIn();
+                }
+            });
+
+            user.subscribe(user.MESSAGE_FORGOTPASSWORD, function (resp) {
+                forgotForm.form('enable');
+                if (resp.Success) {
+                    forgotAlert.hide().html('An email has been sent to you with information on resetting your password.')
+                        .removeClass('alert-danger').addClass('alert-success').fadeIn();
+                } else {
+                    forgotForm.form('enable');
+                    
+                    forgotAlert.hide().html('An account was not found for this email address. <a href="/User/Start">Sign up now</a>')
+                        .removeClass('alert-success').addClass('alert-danger').fadeIn();
+                }
+            });
+            
+            
+
+            // Handle login form submission
+            form.submit(function (e) {
+                e.preventDefault();
+                /*form.form('disable');
+                var formData = $(this).serializeObject();
+                user.signIn(formData.Email, formData.Password, formData.RememberMe);*/
+            });
+
+            function setForm() {
+                $("form button[type=submit]").hashcash({
+                    doneCb: function () {
+                        $('#signInForm').form('disable');
+                        var formData = $('#signInForm').serializeObject();
+                        user.signIn(formData.Email, formData.Password, formData.RememberMe, formData.hashcashid);
+                    },
+                    key: "5db34a70-95e6-4b77-a078-5bff90366395",
+                    complexity: .002,
+                    hashcashInputName: 'hashcashid',
+                    lang: {
+                        screenreader_notice: 'Click this to unlock submit button',
+                        screenreader_notice_done: 'Form unlocked. Please submit this form.',
+                        screenreader_computing: 'Please wait while computing.',
+                        screenreader_computed: 'Form is ready. Please submit this form.',
+                        screenreader_done: '__done__% done.',
+                        popup_info: 'Click here to submit.'
+                    }
+                });
+            };
+            setForm();
+
+            // Forgot password form
+            forgotForm.submit(function (e) {
+                e.preventDefault();
+                forgotForm.form('disable');
+                var formData = $(this).serializeObject();
+                user.forgotPassword(formData.Email);
+            });
+            
+            // Show/hide forgot password
+            $('.btn-cancel', form).click(function () {
+                form.hide();
+                forgotForm.show();
+            });
+            
+            $('.btn-cancel', forgotForm).click(function () {
+                form.show();
+                forgotForm.hide();
+            });
+        }));
+    </script>
+} 

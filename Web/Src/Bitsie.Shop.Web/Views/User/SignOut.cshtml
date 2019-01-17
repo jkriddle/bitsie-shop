@@ -1,0 +1,25 @@
+@{
+   
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="signInForm" class="form-signin align-center">
+    <h3>Signing out...</h3>
+
+    <p><img src="@Url.Content("~/Content/img/ajax-loader-orange.gif")" alt="" /></p>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            $.get('/api/user/signout', null, function (resp) {
+                if (resp.Success) {
+                    $.removeCookie('authToken');
+                    window.location = '/user/signin?message=SignedOut';
+                    return;
+                }
+            });
+        }));
+    </script>
+} 

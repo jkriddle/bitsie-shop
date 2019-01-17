@@ -1,0 +1,393 @@
+﻿@import url('shared.less');
+
+html {
+	height: 100%;
+}
+body {
+	background: @orange;
+	margin-top: 60px;
+	font-family: "Montserrat", sans-serif;
+	height: 100%;
+}
+
+html body.checkout {
+	padding-top: 0;
+}
+
+body.sign-in {
+	background-image: -webkit-gradient(
+		linear,
+		right bottom,
+		right top,
+		color-stop(0.45, #FF6A00),
+		color-stop(1, #F7921F)
+	);
+	background-image: -o-linear-gradient(top, #FF6A00 45%, #F7921F 100%);
+	background-image: -moz-linear-gradient(top, #FF6A00 45%, #F7921F 100%);
+	background-image: -webkit-linear-gradient(top, #FF6A00 45%, #F7921F 100%);
+	background-image: -ms-linear-gradient(top, #FF6A00 45%, #F7921F 100%);
+	background-image: linear-gradient(to top, #FF6A00 45%, #F7921F 100%);
+}
+
+#signin-logo{
+	text-align: center;
+
+	img{
+	margin: 0 auto;
+	width: 75%;
+	max-width: 700px;
+	}
+}
+
+.navbar{
+    background:@orange;
+	border-bottom: thin solid white;
+	padding-bottom:10px;
+}
+
+.background-white {
+	background: white;
+}
+
+.background-orange {
+	background: @orange;
+}
+
+.container-full{
+	width: 100%;
+}
+
+
+input {
+	border: none;
+}
+
+.input-full {
+	width: 100%;
+	display: block;
+	padding: 10px 0 10px 10px;
+	font-size: 2em;
+}
+
+.screen-title{
+	padding: 10px;
+	border-bottom: thin solid @orange;
+
+	h4 {
+		color: @orange;
+		font-style: normal;
+		text-transform: uppercase;
+		padding-left: 10px;
+	}
+}
+
+.background-orange .screen-title {
+    background:white;
+    color:@orange;
+}
+
+.amount-dollar-sign {
+	font-size: 4em;
+	color:  #1e1e1e;
+	display: block;
+	text-align: right;
+	width:10%;
+}
+
+input#amount,
+input#gratuity-amount{
+	font-size: 4em;
+	width: 89%;
+	color: #f7931f;
+	padding-left: 10px;
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.new-payment {
+	font-size: .6em;
+}
+
+.header-check {
+	display: none;
+	color: @green;
+	float: right;
+	position: absolute;
+	top: 18px;
+	right: 20px;
+}
+
+#custom-gratuity-entry {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+input:focus {
+border: none;
+outline: none;
+}
+
+
+.btn-full{
+	width: 100%;
+	border-radius:0;
+	text-align: right;
+	padding: 10px 20px 10px 0;
+	font-size: 2em;
+}
+
+.btn-gratuity{
+	background: #f7931f;
+	font-size: 2em;
+	font-weight: bold;
+	color: white;
+	border-radius: 0;
+	width: 24.6%;
+	float: left;
+	padding: 10px 0 10px 0;
+	margin-left: .4%;
+}
+
+.btn-gratuity:hover{
+	color: white;
+}
+
+h3#total-amount {
+	color: white;
+	font-weight: bold;
+	position: relative;
+	bottom: 0;
+	font-size: 3em;
+	margin: 20px 0 0 10px;
+}
+
+#payment-total {
+    font-size:2em;
+
+    small {
+        font-size:1em;
+        font-style:italic;
+    }
+}
+
+#payment-panel {
+    margin-top:10px;
+}
+
+#gratuity-entry {
+	background: #f7931f;
+	box-shadow: none;
+}
+
+body.checkout {
+	text-align: center;
+	font-weight: bold;
+	color: red;
+}
+
+#signInForm {
+	
+	margin-top: 40px;
+
+	.form-group input {
+		background: white;
+		padding: 30px 20px 30px 20px;
+		border-radius: 10px;
+		border: 0px;
+		font-size: 1.15em;		
+	}
+
+	#submit-button {
+	width: 100%;
+	padding: 20px 0px 20px 0px;
+	}
+}
+
+.panel { 
+	border: 0px;
+	margin-bottom: 0px;
+}
+
+
+
+
+.checkout,
+div#wrap {
+	background: @orange;
+	border: none;
+	height: 100% !important;
+	padding: 0;
+	margin: 0;
+	font-family: "Montserrat", sans-serif;
+	color: white;
+
+	.header-loader{
+		position: absolute;
+		top: 20px;
+		right: 10px;
+	}
+
+	#content{ padding: 0; margin: 0;}
+
+	.checkout-header{
+		text-align: left;
+	}
+
+	.payment-form .loader
+	{
+		background: none;
+	}
+
+	#payment-form {
+		
+		width: 100%;
+		background: transparent;
+
+		.receipt-information {
+			background: white;
+			padding: 10px;			
+			text-align: left;
+			color: #333;
+			width: 100%;
+			overflow: hidden;
+			div{
+				padding-left: 20px;
+				
+			}
+			div strong {
+				color: @orange;				
+			}
+		}
+	}
+
+	.qrcode-wrapper{
+		text-align: center;
+		width: 100%;
+
+		.bitcoin-link {
+			color: white;
+			font-weight: normal;
+			padding-top: 10px;
+			display: block;
+		}
+		.bitcoin-qrcode {
+			background: white;
+			padding: 30px 5px 25px 5px;
+			border-radius: 5px;
+			width: 75%;
+			margin: 0 auto;
+		}
+	}
+
+}
+
+.checkout-total {
+		position: relative;
+		bottom: 0px;
+		text-align: left;
+		
+		padding: 20px 0 25px 0px;
+		width: 100%;
+		margin-top: 40px;
+
+		h4 {
+			font-style: italic;
+			color: white;
+			border-bottom: 1px solid white;
+			padding-bottom: 5px;
+			padding-left: 10px;
+			text-align: left;
+			font-weight: normal;
+			width: 100%;
+			margin-bottom: 15px;
+		}
+		.total-usd {
+			position: relative;
+			left: 0;
+			float: left;
+			bottom: 10px;
+			margin: 0 0 0 10px;
+			width: 0 auto;
+		}
+
+		#total-btc {			
+			position: relative;
+			bottom: 10px;
+			right: 0;
+			width: 0 auto;
+			float: right;
+			padding-right: 15px;
+		}
+
+	}
+
+body.checkout .logo {display: none}
+
+
+
+.mobile-checkout-form{
+	background: transparent
+}
+
+/*--------------------------------------------
+//
+// FOR KIOSK
+//
+//--------------------------------------------*/
+
+@media only screen 
+and (min-width : 1224px) {
+
+	.amount-dollar-sign {
+		font-size: 4em;
+		color:  #1e1e1e;
+		display: block;
+		text-align: right;
+		width:3%;
+	}
+
+	input#amount,
+	input#gratuity-amount{
+		font-size: 4em;
+		width: 97%;
+		color: #f7931f;
+		padding-left: 10px;
+	}
+
+
+	#signin-logo {
+		text-align: center;
+
+		img { width: 20%; }
+
+	}
+
+	.form-container {
+			text-align: center;	
+	}
+	
+	#signInForm {
+	
+		width: 30%;
+		margin: 0 auto;
+		margin-top: 40px;
+		text-align: center;
+
+		.form-group input {
+			text-align: left;
+			background: white;
+			padding: 30px 20px 30px 20px;
+			border-radius: 10px;
+			border: 0px;
+			font-size: 1.15em;		
+		}
+
+		#submit-button {
+			width: 100%;
+			padding: 20px 0px 20px 0px;
+		}
+	}
+
+
+}/* --- end kiosk screen --*/
+

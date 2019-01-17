@@ -1,0 +1,55 @@
+@{
+   
+    ViewBag.Title = "Home";
+}
+
+
+<div id="content-header">
+    <h1>Welcome to Bitsie Shop!</h1>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>								
+                    </span>
+                    <h5>Bitsie Wallet</h5>
+                </div>
+                <div id="dashboard-report" class="widget-content">
+                    Loading report...
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script id="dashboardTemplate" type="text/html">
+    <div class="span12">
+		<ul class="site-stats">
+			<li><div class="cc">$<strong>{{toCurrency UsdBalance}}</strong> <small>Wallet Balance (USD)</small></div></li>
+			<li><div class="cc"><strong>{{toFixed BtcBalance 8}}</strong> <small>Wallet Balance (BTC)</small></div></li>
+			<li><div class="cc">$<strong>{{toCurrency MarketPrice}}</strong> <small>Current Market Price</small></div></li>
+		</ul>
+	</div>
+    <div class="clearfix"></div>
+</script>
+
+@section scripts {
+    <script>
+        $(function () {
+
+            $('#dashboard-report').form('overlay');
+
+            Bitsie.Shop.Api.get('/api/wallet/balance', null, function (wallet) {
+                var html = Bitsie.Shop.Template('#dashboardTemplate', wallet);
+                $('#dashboard-report').html(html);
+                $('#dashboard-report').form('overlay-hide');
+            });
+        });
+    </script>
+}

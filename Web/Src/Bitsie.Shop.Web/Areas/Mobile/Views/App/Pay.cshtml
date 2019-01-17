@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Pay";
+}
+
+<div id="payment" class="container-full">
+    <div class="screen-title">
+        <h4>make a payment</h4>
+    </div>
+    <div class="container-full">
+        
+    </div>        
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            //get the merchant id
+            console.log("TOKEN: ");
+            console.log(Bitsie.Shop.Api.Auth.getToken());
+            var order = new Order();
+            var param = new Object();
+            param.MerchantId = localStorage.getItem("merchantId");
+            param.OrderType = "Hosted Checkout";
+            param.Description = "";
+            param.Gratuity = 
+            console.log(param);
+            order.create(param);
+            
+
+        }));
+    </script>
+}

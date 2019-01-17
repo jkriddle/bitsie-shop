@@ -1,0 +1,179 @@
+@model Bitsie.Shop.Domain.User
+@{
+   
+    ViewBag.Title = "Customize Design";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>ACCOUNT <span>CUSTOMIZE DESIGN</span></h1>
+        </div>
+    </div>
+
+
+<form id="appearanceForm" class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>Design Settings</h5>
+                </div>
+                <div class="widget-content padding">
+                </div>
+            </div>
+        </div>	
+    </div>
+</form>
+    </div>
+<script id="appearanceTemplate" type="text/html">
+    <input type="hidden" name="userId" value="{{UserId}}" />
+
+    <div class="form form-horizontal">
+       
+        <div class="form-group">
+            <label class="col-sm-2">Background Color</label>
+            <div class="col-sm-7">
+                <input class="colorpicker form-control" name="BackgroundColor" type="text" placeholder="Background color for Hosted Checkout page." value="{{BackgroundColor}}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2">Store Title</label>
+            <div class="col-sm-7">
+                <input class="form-control" name="StoreTitle" type="text" placeholder="Title shown on your checkout page." value="{{StoreTitle}}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-2">Logo</label>
+            <div class="col-sm-7">
+                <input class="form-control" name="LogoUrl" type="text" placeholder="URL for logo to be shown on Hosted Checkout page." value="{{LogoUrl}}">
+            </div>
+        </div>
+        
+        <!--<div class="form-group">
+            <label class="col-sm-2"></label>
+            <div class="col-sm-7">
+                <a id="show-advanced" href="#">Advanced Settings</a>
+            </div>
+        </div>-->
+        
+
+        <div class="form-group">
+            <label class="col-sm-2">HTML Template</label>
+            <div class="col-sm-7">
+                <textarea name="HtmlTemplate" id="htmlTemplate" rows="12">{{HtmlTemplate}}</textarea>
+                <span class="help-block">Leave this field blank to use the default template. Do not include &lt;html/&gt; &lt;head/&gt; or &lt;body/&gt; tags in your template. 
+                    Your template must contain the text \{{form}} where you would like the checkout form to be displayed.
+                </span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-2"></label>
+            <div class="col-sm-7">
+                <button id="save" type="submit" class="col-md-2 btn btn-primary">Save</button>
+                <a id="preview" href="#" class="col-md-2 pull-right btn btn-default">Preview</a>
+            </div>
+        </div>
+
+    </div>
+
+</script>
+
+
+@section scripts {
+    <script src="/Content/js/plugins/ace/ace/ace.js"></script>
+    <script src="/Content/js/plugins/ace/ace/theme-chrome.js"></script>
+    <script src="/Content/js/plugins/ace/ace/mode-html.js"></script>
+    <script src="/Content/js/plugins/ace/jquery-ace.js"></script>
+
+    <script type="text/javascript">
+        ($(function () {
+
+            var id = Bitsie.Shop.QueryString.id;
+            var form = $('#appearanceForm');
+            var message = $('.alert', form);
+            var user = new User();
+            var userData = null;
+
+            if (Bitsie.Shop.QueryString.updated) {
+                message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Hosted Checkout has been saved.').fadeIn();
+            }
+
+            // Show overlay
+            $('.widget-content', form).form('overlay');
+            
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#appearanceTemplate', resp);
+                $('.widget-content', form).html(html);
+                $('.widget-content', form).form('overlay-hide');
+                $('.colorpicker').colorpicker();
+                $('#htmlTemplate').ace({ theme: 'chrome', lang: 'html', width:'600px' });
+            });
+            
+            // Load user
+            user.getOne(id);
+
+            form.on('click', '#show-advanced', function (e) {
+                e.preventDefault();
+                $(this).closest('.form-group').hide();
+                $('.advanced').show();
+            });
+
+            form.on('click', '#preview', function (e) {
+                e.preventDefault();
+                var frm = $("#form-preview");
+                if (frm.length > 0) frm.remove();
+
+                frm = $('<form id="form-preview" />');
+                frm.attr("action", "/@Model.MerchantId/checkout/preview");
+                frm.attr("method", "POST");
+                frm.attr("target", "_bitsiepreview");
+                var data = form.serializeObject();
+                if (data) {
+                    for (var key in data) {
+                        var input = $('<textarea />');
+                        input.attr("name", key);
+                        input.val(typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key]);
+                        frm.append(input);
+                    }
+                }
+                console.log(data);
+                frm.css('display', 'none');
+                $('body').append(frm);
+                frm.get(0).submit();
+            });
+
+            // Submit form
+            form.submit(function (e) {
+                e.preventDefault();
+                form.form('disable');
+                var formData = form.serializeObject();
+                formData.Type = "design";
+                formData.HtmlTemplate = $('#htmlTemplate').data('ace').editor.ace.getValue();
+                if (!formData.HtmlTemplate) formData.HtmlTemplate = '{{empty}}'; // special code
+                Bitsie.Shop.Api.post('/Api/User/Update', formData, function (resp) {
+                    if (resp.Success) {
+                        message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Design settings have been saved.').fadeIn();
+                    } else {
+                        message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                    Bitsie.Shop.scrollTo(0);
+                    form.form('enable');
+                });
+            });
+
+        }));
+    </script>
+} 

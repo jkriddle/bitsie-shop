@@ -1,0 +1,162 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Customer Details";
+}
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>CUSTOMER <span>DETAILS</span></h1>
+            <div class="page-header-actions">
+                <a  href="#" id="edit-customer-btn" role="button" class="btn btn-success btn-lg"><i class="fa fa-edit"></i> Edit Customer </a>
+            </div>
+        </div>
+        <form id="viewCustomerForm" action="#" method="post" class="row-fluid">
+            <div class="col-xs-12">
+                <div class="widget-content nopadding">
+                    
+                </div>
+            </div>	
+        </form>
+        <div class="widget-box ">
+            <div class="widget-title">
+                <h5>Customer Invoices</h5>
+                <div class="table-length">
+                    <label>Show 
+                        <select size="1">
+                            <option value="10" selected="selected">10</option>
+                            <option value="25">25</option><option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> 
+                        entries</label>
+                </div>
+            </div>
+
+        <div class="widget-content nopadding">
+            <div id="invoiceTable" class="table-wrapper table-datatable" role="grid">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-xs-3"><a href="#FirstName">First Name</a></th>
+                            <th class="col-xs-3"><a href="#LastName">Last Name</a></th>
+                            <th class="col-xs-3"><a href="#InvoiceAmount">Amount</a></th>
+                            <th class="col-xs-3"><a href="#OrderDate">Date</a></th>
+                            <th class="col-xs-2"><a href="#Status">Status</a></th>
+                            <th class="col-xs-1"><a href="#Action"></a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7"><img src="@Url.Content("~/Content/img/spinner.gif")" /> Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>  
+
+                <div class="ui-toolbar ui-widget-header">
+                    <div class="table-filter input-append col-xs-6">
+                        <input class="searchTerm form-control col-xs-4 pull-left" type="text">
+                        <button type="submit" class="btn col-xs-2 pull-left">Search</button> 
+                        <a type="button" class="advanced btn col-xs-2 pull-left" href="#">Advanced</a>
+                    </div>
+                    <div class="table-pager"></div>
+                </div>
+            </div>
+        </div>
+    </div>	
+    </div>
+</div>
+<script id="customerDetailsTemplate" type="text/html">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-xs-2">First Name</label>
+            <div class="controls ">
+                <span class="form-value col-xs-10">{{FirstName}}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Last Name</label>
+            <div class="controls ">
+                <span class="form-value col-xs-10">{{LastName}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-xs-2">Email</label>
+            <div class="controls">
+                <span class="form-value col-xs-10">{{Email}}</span>
+            </div>
+        </div>             
+    </div>
+</script>
+
+<script id="invoiceRowTemplate" type="text/html">
+    {{#Invoices}}
+    <tr class="order-row-{{OrderId}}">
+        <td>{{CustomerFirstName}}</td>
+        <td>{{CustomerLastName}}</td>
+        <td>${{toCurrency USDAmount}}</td>
+        <td>{{toDateTime OrderDate}}</td>        
+        <td class="align-right">{{Status}}</td>
+        <td class="align-center">
+            <a href="@Url.Action("Edit", "Invoice")?id={{InvoiceGuid}}" title="View order"><i class="fa fa-edit" /></a>
+        </td>
+    </tr>  
+    {{/Invoices}}
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var customerForm = $('#viewCustomerForm');
+            var message = $('.alert', customerForm);
+            var customer = new User();
+            var invoice = new Invoice();
+            var invoiceFilter = new SearchFilter();
+            var invoiceTable = $("#invoiceTable");
+
+            // Show overlay
+            $('.widget-content', customerForm).form('overlay');
+
+            $('#edit-customer-btn').click(function() {
+                window.location = '/Manage/Customer/Edit?id=' + id;
+            });
+            
+            customer.subscribe(customer.MESSAGE_RETRIEVED, function (resp) {
+                console.log(resp);
+                var html = Bitsie.Shop.Template('#customerDetailsTemplate', resp);
+                $('.widget-content', customerForm).html(html);
+                $('.widget-content', customerForm).form('overlay-hide');
+            });
+
+            //get list of invoices for customer
+            invoice.subscribe(invoice.INVOICE_LIST, function (resp) {
+                console.log(resp);
+                if (resp.Invoices.length > 0) {
+                    var html = Bitsie.Shop.Template('#invoiceRowTemplate', resp);
+                    $('tbody', invoiceTable).html(html);
+                    dataTable.update(resp.CurrentPage, resp.NumPages);
+                } else {
+                    dataTable.empty('No invoices found.');
+                }
+            });
+            invoiceFilter.CustomerId = id;
+            var dataTable = new DataTable(invoiceTable, invoiceFilter, invoice, function () {
+                $('.date-range').daterangepicker({
+                    ranges: Bitsie.Shop.Config.dateRanges
+                },
+                function (start, end) {
+                    $('.modal input[name="StartDate"]').val(start.format("YYYY-MM-DD"));
+                    $('.modal input[name="EndDate"]').val(end.format("YYYY-MM-DD"));
+                });
+            });
+
+            // Load user
+            customer.getOne(id);
+
+        }));
+    </script>
+} 

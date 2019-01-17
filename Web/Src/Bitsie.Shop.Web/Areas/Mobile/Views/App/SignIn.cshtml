@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "Sign In";
+}
+
+<div id="signin-logo">
+    <img src="~/Content/img/mobile/bitsie_shop_logo.png"/>
+</div>
+
+<div class="col-xs-12 signin-form-container">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10 form-container">
+        <form id="signInForm" role="form">
+            <div class="alert alert-danger display-none"></div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="Email" required="required" placeholder="Email" />
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="Password" required="required" placeholder="Password" />
+            </div>
+            <button type="submit" id="submit-button" class="btn btn-success btn-lg text-uppercase pull-right">SUBMIT <i class="fa fa-cheveron-right"></i></button>
+        </form>
+    </div>
+    <div class="col-xs-1"></div>
+</div>
+
+<div class="clearfix"></div>
+
+<form id="forgotForm" class="form-signin display-none">
+    <h3 class="form-signin-heading">Forgot your password?</h3>
+    
+    <div class="alert alert-danger display-none"></div>
+    
+    <p>Enter your email address and we will send you instructions on resetting your password.</p>
+
+    <input type="text" class="input-block-level" placeholder="Email address" name="Email" />
+    <button class="btn btn-large btn-primary pull-right" type="submit">Reset Password</button> 
+    <a class="btn btn-link btn-cancel" href="#">&laquo; Back to Login</a>
+    <div class="clearfix"></div>
+</form>
+
+
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function() {
+
+            var message = '@ViewBag.Message';
+            var form = $('#signInForm');
+            var alertPanel = $('.alert', form);
+
+            var forgotForm = $('#forgotForm');
+            var forgotAlert = $('.alert', forgotForm);
+            var user = new User();
+
+            // Login success
+            user.subscribe(user.MESSAGE_SIGNIN, function (resp) {
+                if (resp.Success) {
+                    localStorage.setItem("merchantId", resp.User.MerchantId);
+                    var redirect = Bitsie.Shop.QueryString.ReturnUrl
+                    || '@Url.Action("AmountEntry", "App", new { @area="Mobile"})';
+                    window.location.href = redirect;
+                } else {
+                    form.form('enable');
+                    alertPanel.hide().html(resp.Errors.join('<br />'))
+                        .removeClass('alert-info').addClass('alert-danger').fadeIn();
+                }
+            });
+
+            user.subscribe(user.MESSAGE_FORGOTPASSWORD, function (resp) {
+                if (resp.Success) {
+                    forgotAlert.hide().html('An email has been sent to you with information on resetting your password.')
+                        .removeClass('alert-danger').addClass('alert-success').fadeIn();
+                } else {
+                    forgotForm.form('enable');
+                    forgotAlert.hide().html('An account was not found for this email address. <a href="/User/Start">Sign up now</a>')
+                        .removeClass('alert-success').addClass('alert-danger').fadeIn();
+                }
+            });
+
+            // Handle messages
+            if (message) {
+                alertPanel.html(message)
+                    .removeClass('alert-danger').addClass('alert-info').fadeIn();
+            }
+
+            // Handle login form submission
+            form.submit(function (e) {
+                e.preventDefault();
+                form.form('disable');
+                var formData = $(this).serializeObject();
+                user.signIn(formData.Email, formData.Password, formData.RememberMe);
+            });
+
+            // Forgot password form
+            forgotForm.submit(function (e) {
+                e.preventDefault();
+                forgotForm.form('disable');
+                var formData = $(this).serializeObject();
+                user.forgotPassword(formData.Email);
+            });
+        }));
+    </script>
+    }

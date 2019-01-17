@@ -1,0 +1,44 @@
+﻿@using Bitsie.Shop.Domain
+@model Bitsie.Shop.Web.Models.CheckoutViewModel
+
+@if (!String.IsNullOrEmpty(Model.Merchant.Settings.LogoUrl) && !Model.IsMobile)
+    {
+    <h1 id="header"><img src="@Model.Merchant.Settings.LogoUrl" alt="" /></h1>
+} else if (String.IsNullOrEmpty(Model.Merchant.Settings.StoreTitle) || Model.IsMobile) {
+        
+        
+    if(Model.IsMobile)
+        {
+        <div class="panel container-full background-white merchant-header">
+            <div class="screen-title">
+                <h1 class="default-merchant-header">@Model.Merchant.Settings.StoreTitle</h1>
+                <!--
+                @if (Model.Order != null && (Model.Order.Status != OrderStatus.Confirmed || Model.Order.Status == OrderStatus.Paid))
+                {
+                    <span class="pull-right header-loader"><img class="order-loader" src="@Url.Content("~/Content/img/ajax-loader-orange.gif")" alt="Waiting for payment" /></span>
+                    <span class="pull-right header-check"><i class="fa fa-check-circle fa-2x"></i></span>
+                }
+                else if (Model.Order != null && (Model.Order.Status == OrderStatus.Paid || Model.Order.Status == OrderStatus.Confirmed))
+                {   
+                        
+                    <span class="pull-right header-check"></span><i class="fa fa-check-circle fa-2x"></i>
+                }
+                -->
+            </div>
+        </div>
+        }
+    else
+    {
+        <div>
+            <h1 class="default-merchant-header">@Model.Merchant.Settings.StoreTitle</h1>    
+        </div>
+    }
+}
+else
+{ 
+    <div class="screen-title">
+        <h1 class="default-merchant-header">@Model.Merchant.Settings.StoreTitle</h1>
+    </div>
+}
+
+    

@@ -1,0 +1,113 @@
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Manage Users";
+}
+
+<div id="content-header">
+    <h1>Users</h1>
+</div>
+
+<div class="container-fluid">
+    <form id="viewUserForm" action="#" method="post" class="row-fluid">
+        <div class="span12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>View User</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    
+                </div>
+            </div>
+
+        </div>	
+    </form>
+</div>
+
+<script id="userDetailsTemplate" type="text/html">
+    <div class="form-horizontal">
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">User ID</label>
+            <div class="col-md-8">
+                <span class="form-value">{{UserId}}</span>
+            </div>
+        </div>
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Email</label>
+            <div class="col-md-8">
+                <span class="form-value">{{Email}}</span>
+            </div>
+        </div>
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Role</label>
+            <div class="col-md-8">
+                <span class="form-value">{{Role}}</span>
+            </div>
+        </div>
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Store URL</label>
+            <div class="col-md-8">
+                <span class="form-value">
+                    <a href="@DomainHelper.AbsoluteUrl("")/{{MerchantId}}/checkout" target="_blank">@DomainHelper.AbsoluteUrl("")/{{MerchantId}}/checkout</a>
+                </span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Store Title</label>
+            <div class="col-md-8">
+                <span class="form-value">{{StoreTitle}}</span>
+            </div>
+        </div>
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Store Logo</label>
+            <div class="col-md-8">
+                <span class="form-value">{{LogoUrl}}</span>
+            </div>
+        </div>
+                        
+        <div class="form-group">
+            <label class="col-md-3 control-label">Background Color</label>
+            <div class="col-md-8">
+                <span class="form-value">{{BackgroundColor}}</span>
+            </div>
+        </div>
+                        
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var userForm = $('#viewUserForm');
+            var message = $('.alert', userForm);
+            var user = new User();
+            
+            // Show overlay
+            $('.widget-content', userForm).form('overlay');
+            
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                var html = Bitsie.Shop.Template('#userDetailsTemplate', resp);
+                $('.widget-content', userForm).html(html);
+                $('.widget-content', userForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getSecure(id);
+
+        }));
+    </script>
+} 

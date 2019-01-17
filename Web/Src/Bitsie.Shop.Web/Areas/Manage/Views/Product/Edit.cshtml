@@ -1,0 +1,200 @@
+@using Bitsie.Shop.Domain
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Manage Products";
+}
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Product <span>EDIT</span> </h1>
+        </div>
+
+        <form id="editProductForm" action="#" method="post" class="row-fluid">
+            <div class="col-md-12">
+             
+                <div class="alert display-none"></div>
+
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="glyphicon glyphicon-align-justify"></i>									
+                        </span>
+                        <h5>Edit Product</h5>
+                    </div>
+                    <div class="widget-content padding">
+                    </div>
+                </div>
+
+            </div>	
+        </form>
+</div>
+    </div>
+
+<script id="editProductTemplate" type="text/html">
+   
+    <div class="col-xs-8">
+        <div id="product-form" class="form-horizontal">
+            <input type="hidden" name="ProductId" value="{{ProductId}}" />
+
+            {{#if ProductId}}
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Product URL</label>
+                    <div class="col-md-9">
+                        <span class="control-text"><a target="_blank" href="@DomainHelper.AbsoluteUrl("")/{{MerchantId}}/product/view/{{ProductId}}">@DomainHelper.AbsoluteUrl("")/{{MerchantId}}/product/view/{{ProductId}}</a></span>
+                    </div>
+                </div>
+            {{/if}}
+        
+            <div class="form-group">
+                <label class="col-md-3 control-label">Title</label>
+                <div class="col-md-9">
+                    <input name="Title"  class="form-control" type="text" placeholder="Product title" value="{{Title}}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">Price</label>
+                <div class="col-md-9">
+                    <input name="Price"  data-ref="amount" class="form-control price-input" type="text" placeholder="Price in USD" value="{{toCurrency Price}}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">Description</label>
+                <div class="col-md-9">
+                    <textarea name="Description" rows="8" class="form-control" placeholder="Product description">{{Description}}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">Product URL</label>
+                <div class="col-md-9">
+                    <input name="RedirectUrl"  class="form-control" type="text" placeholder="URL of product file or page on your site" value="{{RedirectUrl}}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-3"></label>
+                <div class="col-md-9">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+     </div>
+
+    <div class="col-xs-4 well text-center">
+
+        {{#if ProductId}}
+        <h4 class="text-center">Purchase Button Preview</h4>
+        
+        <div class="bitsie-buy-button-preview"> 
+            <a href="#" class="bitsie-buy-button" data-merchantid="{{MerchantId}}" data-productid="{{ProductId}}"></a>
+        </div> 
+
+            <br />
+            <div class="col-xs-12">
+                <h4 class="text-center">Embed Code</h4>
+                <small><em>Notice: the Script tag below is only required once per page.</em></small>
+                <div class="row">
+                    <textarea id="buy-button-embed-code" class="form-control col-xs-12" rows="3">{{scriptTag}}<a href="#" class="bitsie-buy-button" data-merchantid="{{MerchantId}}" data-productid="{{ProductId}}"></a>
+                </textarea>
+                </div>
+
+
+                
+                <br />
+                <div class="row">
+                       <a href="" target="_blank" class="btn-large  btn btn-default text-left col-xs-10 col-xs-offset-1"><i class="pull-left fa-info-circle fa fa-2x"></i><small> Need Help? Click here for instructions.</small></a>   
+                </div>
+        </div>
+        {{/if}}
+
+    </div>
+    
+
+    <div class="clearfix"></div> 
+</script>
+
+@section scripts {
+    <script src="@Url.Content("~/Content/js/plugins/ckeditor/ckeditor.js")"></script>
+    <script src="@Url.Content("~/Content/js/plugins/ckeditor/adapters/jquery.js")"></script>
+    <script src="/buybutton.js"></script>
+
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var productForm = $('#editProductForm');
+            var embedCodeContainer = $("#buy-button-embed-code");
+            var message = $('.alert', productForm);
+            var product = new Product();
+            var productData = null;
+
+            if (Bitsie.Shop.QueryString.updated) {
+                message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Product has been saved.').fadeIn();
+            }
+
+            // Show overlay
+            $('.widget-content', productForm).form('overlay');
+
+            function displayProductForm(resp) {
+                var scriptTag = new Handlebars.SafeString('<script src="https\:\/\/shop.bitsie.com\/buybutton.min.js"><\/script>');
+
+                resp.scriptTag = scriptTag;
+                var html = Bitsie.Shop.Template('#editProductTemplate', resp);
+                $('.widget-content', productForm).html(html);
+                $('.widget-content', productForm).form('overlay-hide');
+                $('textarea[name="Description"]').ckeditor();
+                setButtons();
+            }
+            
+            product.subscribe(product.MESSAGE_RETRIEVED, function (resp) {
+                productData = resp;
+                displayProductForm(productData);
+            });
+
+            function handleSaveResponse(resp) {
+                if (resp.Success) {
+                    if (id == null) {
+                        window.location = '/Manage/Product/Edit?id=' + resp.ProductId + '&updated=true';
+                        return;
+                    }
+                    message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Product has been saved.').fadeIn();
+                } else {
+                    message.hide().removeClass('alert-success')
+                    .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                }
+                Bitsie.Shop.scrollTo(0);
+                productForm.form('enable');
+            }
+
+            product.subscribe(product.MESSAGE_UPDATED, function (resp) {
+                handleSaveResponse(resp);
+            });
+
+            product.subscribe(product.MESSAGE_CREATED, function (resp) {
+                handleSaveResponse(resp);
+            });
+
+            // Load product
+            if (id) product.getSecure(id);
+            else displayProductForm({});
+
+            // Submit form
+            productForm.submit(function (e) {
+                e.preventDefault();
+                productForm.form('disable');
+                var formData = productForm.serializeObject();
+                if (id == null) product.create(formData);
+                else product.update(formData);
+            });
+
+        }));
+
+    </script>
+} 

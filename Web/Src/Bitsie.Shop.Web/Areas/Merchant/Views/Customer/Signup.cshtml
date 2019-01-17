@@ -1,0 +1,82 @@
+﻿@model Bitsie.Shop.Web.Models.BaseMerchantViewModel
+@{
+    ViewBag.Title = "Signup";
+}
+<div class="page">
+    
+    <h1 class="default-merchant-header">CUSTOMER SIGNUP</h1>    
+    
+    <div class="alert alert-danger" style="display:none;"></div>
+
+    <form id="signupForm" class="form form-horizontal" role="form">
+        <input type="hidden" name="MerchantId" value="@Model.Merchant.MerchantId" />
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label">First Name</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="FirstName" required="required" />
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Last Name</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="LastName" required="required" />
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Email</label>
+            <div class="col-sm-8">
+                <input type="email" class="form-control" name="Email" required="required" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="password">Password</label>
+            <div class="col-sm-8">
+                <input type="password" class="form-control" name="Password" placeholder="Enter password" required="required" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="password-confirm">Confirm Password</label>
+            <div class="col-sm-8">
+              <input type="password" class="form-control" name="ConfirmPassword" placeholder="Confirm password" required="required" />
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var form = $('#signupForm');
+        var message = $('.alert');
+
+        function showSuccessForm() {
+            alert("SUCCESS");
+        }
+
+        form.validate({
+            submitHandler: function (e) {
+                form.form('disable');
+                var formdata = form.serializeObject();
+                Bitsie.Shop.Api.post("/Api/User/SignUp", formdata, function (resp) {
+                    if (resp.Success) {
+                        showSuccessForm();
+                    } else {
+                        form.form('enable');
+                        message.hide().html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                });
+            }
+        });
+
+    });
+</script>

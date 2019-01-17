@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:windowSoftInputMode="stateVisible|adjustResize"
+    android:background="#ffffffff">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:background="@drawable/nav_border"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <ImageView
+            android:src="@drawable/nav_logo"
+            android:layout_width="match_parent"
+            android:layout_gravity="left"
+            android:scaleType="fitStart"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView1" />
+    </LinearLayout>
+    <TextView
+        android:text="@string/amount"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="20.5dp"
+        android:id="@+id/amountLabel"
+        android:textColor="#f7931a"
+        android:fitsSystemWindows="false"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="40.8dp" />
+    <View
+        android:layout_height=".5dip"
+        android:layout_width="fill_parent"
+        android:background="#f7931a" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="#ffffff"
+        android:minHeight="100dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColorLink="#f7931a"
+            android:textColor="#f7931a"
+            android:background="#ffffff"
+            android:height="100dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:minHeight="100dp"
+            android:maxHeight="100dp"
+            android:textSize="69sp"
+            android:text="$"
+            android:id="@+id/dollarSign"
+            android:gravity="center_vertical" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:background="#ffffff"
+            android:layout_height="wrap_content"
+            android:id="@+id/amountText"
+            android:textColorLink="#f7931a"
+            android:textColor="#f7931a"
+            android:height="100dp"
+            android:minHeight="100dp"
+            android:layout_gravity="left"
+            android:gravity="left|center_vertical"
+            android:maxHeight="100dp"
+            android:textSize="69sp"
+            android:hint="0.00"
+            android:digits="$0123456789."
+            android:inputType="numberDecimal"
+            android:fitsSystemWindows="false"
+            android:windowSoftInputMode="stateVisible" />
+    </LinearLayout>
+    <Button
+        android:text="SUBMIT"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColorLink="#ffffff"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        android:drawableRight="@drawable/chevron"
+        android:drawablePadding="10dip"
+        android:background="#4DAE4A"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:gravity="right"
+        android:id="@+id/goButton" />
+</LinearLayout>

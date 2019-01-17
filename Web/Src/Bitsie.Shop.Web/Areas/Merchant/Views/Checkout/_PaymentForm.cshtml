@@ -1,0 +1,196 @@
+﻿@model Bitsie.Shop.Web.Models.CheckoutViewModel
+
+@* Do not use merchant style settings if viewing invoice generated from HTML5 app *@
+@if (!Model.IsMobile)
+{
+    <style type="text/css">
+        body {
+            background: @Model.Merchant.Settings.BackgroundColor;
+        }else {
+             background: #f7931f;
+         }
+    </style>
+}
+
+<div id="payment-form" class="@if (Model.IsMobile){<text>mobile-checkout-form</text>}">
+    <a name="checkout"></a>
+        <div class="loader">
+            <h4 class="align-center">Retrieving order, please wait...</h4>
+            
+            <img class="order-loader" src="@Url.Content("~/Content/img/ajax-loader-orange.gif")" alt="" />
+            
+        </div>
+    </div>
+   
+    
+<script id="paymentFormTemplate" type="text/html">
+    
+    <div class="qrcode-wrapper">
+        
+        {{#is Order.Status 2}}
+        <div class="alert alert-warning">
+            Partial payment received. 
+            Please send the balance shown below to the payment address in order to complete the checkout process.
+        </div>
+        {{/is}}
+            
+        <p>Expires in <span id="timer" class="label label-danger"></span></p>
+            
+        <div class="bitcoin-qrcode"></div>
+				
+				
+        <a class="bitcoin-link" href="{{Order.PaymentUrl}}">
+            {{Order.PaymentAddress}}
+        </a>
+        
+        <div class="checkout-total">
+            <h4>total</h4>
+            <h3 class="total-usd">${{toCurrency Order.UsdBalance}}</h3>
+            <h5 id="total-btc">{{toFixed Order.BtcBalance 8}} BTC</h5>
+        </div>
+        
+        <div class="clearfix"></div>
+        {{#is Order.Status 2}}
+            <div class="text-success">You've already paid <span id="amount-paid">{{Order.BtcPaid}}</span> BTC</div>
+        {{/is}}
+
+    </div>
+</script>
+    
+<script id="receiptTemplate" type="text/html">
+    
+    <div class="receipt-header">
+        <h3>Thank You</h3>
+        <p>Your payment has been received. Your receipt is shown below.</p>
+        
+        @if (Model.Order.Product != null)
+        {
+            <a class="btn btn-success noprint" href="@Url.Action("File", "Download", new { orderNumber = Model.Order.OrderNumber })"><i class="fa fa-file-archive-o"></i> &nbsp; Continue to Product</a>
+        }
+
+        @if(!Model.IsMobile)
+        {
+            <a href="javascript:window.print()" class="noprint btn btn-info"> <i class="fa fa-print"></i> &nbsp; Print Receipt </a>
+        }
+
+        @if (Model.Order.Product != null)
+        {
+            <p class="text-danger">Products may be downloaded for up to 24 hours after purchase.</p>
+        }
+
+
+    </div>
+    
+    @if(Model.IsMobile)
+    {
+        <div class="receipt-information">
+            <div class="row">
+                <strong>Order Date</strong><br/>
+                {{toDateTime OrderDate}}
+            </div>
+            <div class="row">
+                <strong>Reference/Description</strong><br/>
+                {{Description}}
+            </div>
+            <div class="row">
+                <strong>Total</strong><br/>
+                ${{toCurrency Total}}
+            </div>
+            <div class="row">
+                <strong>BTC Amount</strong><br/>
+                {{toFixed BtcTotal 8}}
+            </div>
+            <div class="row">
+                <strong>Payment Address</strong><br/>
+                {{PaymentAddress}}
+            </div>
+            <div class="row">
+                <strong>Status</strong><br/>
+                {{StatusDescription}}
+            </div>
+        </div>
+
+        <a href="/mobile/app/amountentry" class="btn btn-success btn-full text-right new-payment">new payment <i class="fa fa-chevron-right"></i></a>
+
+        
+    }else
+    {
+
+        <table class="table table-bordered span12 receipt-table">
+            <tbody>
+                <tr>
+                    <th>Order Date</th>
+                    <td>{{toDateTime OrderDate}}</td>
+                </tr>
+                <tr>
+                    <th>Order Number</th>
+                    <td>{{OrderNumber}}</td>
+                </tr>
+                <tr>
+                    <th>Reference/Description</th>
+                    <td>{{Description}}</td>
+                </tr>
+                <tr>
+                    <th>Total</th>
+                    <td>${{toCurrency Total}}</td>
+                </tr>
+                <tr>
+                    <th>BTC Amount</th>
+                    <td>{{toFixed BtcTotal 8}}</td>
+                </tr>
+                <tr>
+                    <th>Payment Address</th>
+                    <td>{{PaymentAddress}}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{StatusDescription}}</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</script>
+
+<script id="expiredTemplate" type="text/html">
+    <h3>Order Has Expired</h3>
+
+    <p>You did not send funds to the address in time and your order has expired.</p>
+    
+    <p>If you did make a payment and still arrived at this page, please print the below order information for your records and 
+        <a href="mailto:support@bitsie.com">contact technical support</a>. Otherwise you can <a href="/checkout/@Model.Merchant.MerchantId">start over</a> and try again.
+    </p>
+    <p><a href="javascript:window.print()" class="noprint btn btn-info">Print Order Information</a></p>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>Order Date</th>
+                <td>{{toDateTime OrderDate}}</td>
+            </tr>
+            <tr>
+                <th>Order Number</th>
+                <td>{{OrderNumber}}</td>
+            </tr>
+            <tr>
+                <th>Reference/Description</th>
+                <td>{{Description}}</td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td>${{toCurrency Total}}</td>
+            </tr>
+            <tr>
+                <th>BTC Amount</th>
+                <td>{{toFixed BtcTotal 8}}</td>
+            </tr>
+            <tr>
+                <th>Payment Address</th>
+                <td>{{PaymentAddress}}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{StatusDescription}}</td>
+            </tr>
+        </tbody>
+    </table>
+</script>

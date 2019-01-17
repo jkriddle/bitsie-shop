@@ -1,0 +1,193 @@
+﻿@{
+    ViewBag.Title = "Tipsie";
+}
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Tipsie Users<span></span></h1>   
+            <div class="page-header-actions">
+                <a  href="#" role="button" data-target="#create-tipsie-dialog" data-toggle="modal" class="create-tipsie-dialog-btn btn btn-success btn-lg"><i class="fa fa-plus"></i> New Tipsie Card </a>
+            </div>     
+        </div>
+        
+        <div id="message" class="alert display-none"></div>
+            
+        <div class="widget-box">
+            <div class="widget-title">
+                <h5>Tipsie List</h5>                
+                <div class="table-length">
+                    <label>Show 
+                        <select size="1">
+                            <option value="10" selected="selected">10</option>
+                            <option value="25">25</option><option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> 
+                        entries</label>
+                </div>
+            </div>
+
+            <div class="widget-content nopadding">
+                <div id="customerTable" class="table-wrapper table-datatable" role="grid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-3"><a href="#FirstName">First Name</a></th>    
+                                <th class="col-xs-3"><a href="#LastName">Last Name</a></th>                                    
+                                <th class="col-xs-3"><a href="#Email">Email</a></th>
+                                <th class="col-xs-1"><a href="#Action"></a></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7"><img src="@Url.Content("~/Content/img/spinner.gif")" /> Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>  
+
+                    <div class="ui-toolbar ui-widget-header">
+                        <div class="table-filter input-append col-xs-6">
+                            <input class="searchTerm form-control col-xs-4 pull-left" type="text">
+                            <button type="submit" class="btn col-xs-2 pull-left">Search</button> 
+                        </div>
+                        <div class="table-pager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+    </div>
+</div>
+
+<script id="searchTemplate" type="text/html">
+    <h4>Advanced Search</h4>
+    <form class="form-horizontal form-modal">
+        <div class="control-group">
+            <label class="col-md-3 control-label">Order Date</label>
+            <div class="col-md-7">
+                <input class="form-control date-range" name="OrderDateRange" type="text" value="{{OrderDateRange}}" />
+                <input type="hidden" name="StartDate" value="{{StartDate}}" />
+                <input type="hidden" name="EndDate" value="{{EndDate}}" />
+                <i class="icon-inline icon-calendar"></i>
+            </div>
+        </div>
+    </form>
+</script>
+
+
+</div>
+
+<div id="create-tipsie-dialog" class="modal  fade" tabindex="-1" role="dialog" aria-hidden="true" >
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                 <h3>Create Tipsie User</h3>
+             </div>
+             <div class="modal-body">
+                 <p>Add in a Users name or a location (ex. Bar A)</p>
+                 <form id="customer-entry">
+                     <div class="form-group">
+                         <label class="control-label">First Name</label>
+                         <input class="form-control" type="text" name="FirstName" placeholder="First Name" />
+                     </div>
+                     <div class="form-group">
+                         <label class="control-label">Last Name</label>
+                         <input class="form-control" type="text" name="LastName" placeholder="Last Name" />
+                     </div>
+                     <div class="form-group">
+                         <label class="control-label">Email</label>
+                         <input class="form-control" type="text" name="Email" placeholder="Users Email" />
+                     </div>  
+                 </form>       
+                 <div id="add-customer-alert" class="alert alert-danger display-none"></div>
+             </div>
+             <div class="modal-footer">
+                 <a type="button" href="#" class="btn" data-dismiss="modal" aria-hidden="true" >Close</a>
+                 <a id="save-customer-info" href="#" class="btn btn-primary">Save</a>
+             </div>
+         </div>
+    </div>
+</div>
+
+<script id="customerRowTemplate" type="text/html">
+    {{#Users}}
+    <tr class="customer-row-{{CustomerId}}">
+        <td>{{FirstName}}</td>
+        <td>{{LastName}}</td>
+        <td>{{Email}}</td>
+        <td class="align-center">
+            <a class="btn btn-default" href="@Url.Action("Details", "User")?id={{UserId}}" title="View User"><i class="fa fa-eye" ></i></a>            
+            <a class="btn btn-default" href="@Url.Action("Edit", "Customer")?id={{UserId}}" title="Edit User"><i class="fa fa-edit" ></i></a>
+            <a class="btn btn-default" href="@Url.Action("Card", "Tipsie")?id={{UserId}}" title="Print Tipsie Card"><i class="fa fa-qrcode" ></i></a>
+            </td>
+        </tr>  
+    {{/Users}}
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var customerFilter = new SearchFilter();
+            customerFilter.Role = 3;
+            var customer = new User();
+            var customerTable = $('#customerTable');
+            var message = $('#message');
+
+            // Customer list rendering
+            function renderList() {
+                customer.subscribe(customer.MESSAGE_LIST, function (resp) {
+                    console.log(resp);
+                    if (resp.Users.length > 0) {
+                        var html = Bitsie.Shop.Template('#customerRowTemplate', resp);
+                        $('tbody', customerTable).html(html);
+                        dataTable.update(resp.CurrentPage, resp.NumPages);
+                    } else {
+                        dataTable.empty('No customers found.');
+                    }
+                    
+                });
+            }
+
+           
+
+            renderList();
+            
+            // Init table
+            var dataTable = new DataTable(customerTable, customerFilter, customer, function () {
+            });
+
+            customer.subscribe(customer.MESSAGE_CREATED, function (resp) {
+                if(resp.Success == true) {
+                    $("#create-tipsie-dialog").modal("hide");
+                    $(this).closest('form').find("input[type=text], textarea").val("");
+                    customer.get(customerFilter);
+                }
+                
+                if (resp.Success) {
+                    message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('User has been saved.').fadeIn();
+                    Bitsie.Shop.scrollTo(0);
+                    renderList();
+                } else {
+                    $("#add-customer-alert").html(resp.Errors.join('<br />'));
+                    $("#add-customer-alert").fadeIn();
+                }
+            });
+
+            $("#save-customer-info").click(function (e) {
+                var param = $('#create-tipsie-dialog form').serializeObject();
+                param.IsTipsieUser = true;
+                customer.create(param);
+            });
+           
+        }));
+    </script>
+} 
+
+

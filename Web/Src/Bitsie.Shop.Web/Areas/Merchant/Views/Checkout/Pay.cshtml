@@ -1,0 +1,64 @@
+@model Bitsie.Shop.Web.Models.CheckoutViewModel
+@{
+   
+    ViewBag.Title = @Model.Merchant.Settings.StoreTitle;   
+    Layout = "~/Views/Shared/_Checkout.cshtml";
+}
+
+<style type="text/css">
+    body {
+        background: @Model.Merchant.Settings.BackgroundColor;
+    }
+</style>
+
+<div class="page">
+   
+    @Html.Partial("_Header")
+
+    <form id="checkout" class="form form-horizontal" action="#" method="post">
+    
+        <div class="control-group">
+            <label class="control-label">Amount <span class="required">*</span></label>
+            <div class="controls">
+                <span class="form-value">
+                    <input class="input-large" type="text" name="subtotal" required placeholder="Amount (in USD) to pay" />
+                </span>
+            </div>
+        </div>
+    
+        <div class="control-group">
+            <label class="control-label">Description/Reference</label>
+            <div class="controls">
+                <span class="form-value">
+                    <input class="input-xlarge" type="text" name="note" required placeholder="Name, account number, company, etc." />
+                </span>
+            </div>
+        </div>
+    
+        <div class="control-group">
+            <label class="control-label"></label>
+            <div class="controls">
+                <button id="continue" type="submit" class="btn btn-primary">Continue &raquo;</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var merchantId = '@Model.Merchant.MerchantId';
+
+            $('#checkout').validate({
+                submitHandler: function (form) {
+                    var param = $(form).serializeObject();
+                    param.MerchantId = merchantId;
+                    Bitsie.Shop.Api.post('/api/order/create', param, function (resp) {
+                        window.location = '/checkout/pay/' + resp.OrderNumber;
+                    });
+                }
+            });
+
+        }));
+    </script>
+} 

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{5AE31449-DEAD-4FC7-B04A-80C97B5AB762}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Bitsie.Shop.Mobile</RootNamespace>
+    <AndroidApplication>True</AndroidApplication>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
+    <AssemblyName>Bitsie.Shop.Mobile.UI</AssemblyName>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>..\packages\ZXing.Net.Mobile.1.4.6\lib\MonoAndroid\Xamarin.Android.Support.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.monoandroid">
+      <HintPath>..\packages\ZXing.Net.Mobile.1.4.6\lib\MonoAndroid\zxing.monoandroid.dll</HintPath>
+    </Reference>
+    <Reference Include="ZXing.Net.Mobile">
+      <HintPath>..\packages\ZXing.Net.Mobile.1.4.6\lib\MonoAndroid\ZXing.Net.Mobile.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BaseActivity.cs" />
+    <Compile Include="MainActivity.cs" />
+    <Compile Include="LoadingOverlay.cs" />
+    <Compile Include="BackupPayActivity.cs" />
+    <Compile Include="QrCodeActivity.cs" />
+    <Compile Include="GratuityActivity.cs" />
+    <Compile Include="PayActivity.cs" />
+    <Compile Include="PreferencesManager.cs" />
+    <Compile Include="LoginActivity.cs" />
+    <Compile Include="ReceiptActivity.cs" />
+    <Compile Include="SplashActivity.cs" />
+    <Compile Include="OrdersActivity.cs" />
+    <Compile Include="OrderAdapter.cs" />
+    <Compile Include="GestureListener.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+    <None Include="Assets\AboutAssets.txt" />
+    <None Include="Properties\AndroidManifest.xml" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\bitsie_shop_logo.png" />
+    <AndroidResource Include="Resources\drawable\dollar_sign.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\nav_border.xml" />
+    <AndroidResource Include="Resources\drawable\nav_logo.png" />
+    <AndroidResource Include="Resources\drawable\numberpad_button.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_corner_green.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_corner_orange.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_corner_white.xml" />
+    <AndroidResource Include="Resources\drawable\splash.jpg" />
+    <AndroidResource Include="Resources\drawable\text_underline.xml" />
+    <AndroidResource Include="Resources\drawable\white_box_button.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\values\Strings.xml" />
+    <AndroidResource Include="Resources\values\Styles.xml" />
+    <AndroidResource Include="Resources\layout\Main.axml" />
+    <AndroidResource Include="Resources\layout\BackupPay.axml" />
+    <AndroidResource Include="Resources\layout\Gratuity.axml" />
+    <AndroidResource Include="Resources\layout\Pay.axml" />
+    <AndroidResource Include="Resources\layout\Receipt.axml" />
+    <AndroidResource Include="Resources\layout\Login.axml" />
+    <AndroidResource Include="Resources\drawable\chevron.png" />
+    <AndroidResource Include="Resources\drawable\orange_border_button.xml" />
+    <AndroidResource Include="Resources\layout\CustomGratuityDialog.axml" />
+    <AndroidResource Include="Resources\drawable\orange_border_button_text.xml" />
+    <AndroidResource Include="Resources\values\dimens.xml" />
+    <AndroidResource Include="Resources\values-normal\dimens.xml" />
+    <AndroidResource Include="Resources\values-large\dimens.xml" />
+    <AndroidResource Include="Resources\layout\Orders.axml" />
+    <AndroidResource Include="Resources\layout\OrderRow.axml" />
+    <AndroidResource Include="Resources\raw\register.mp3" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Bitsie.Shop.Services\Bitsie.Shop.Services.csproj">
+      <Project>{EEAA24AD-C86C-4045-A17B-A245D61C81ED}</Project>
+      <Name>Bitsie.Shop.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bitsie.Shop.Infrastructure\Bitsie.Shop.Infrastructure.csproj">
+      <Project>{DAAFCE0C-3E4D-4D65-8FA0-AB2906B0EEC8}</Project>
+      <Name>Bitsie.Shop.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bitsie.Shop.Common\Bitsie.Shop.Common.csproj">
+      <Project>{C72B7525-0469-498A-AC22-9E8B2489BB85}</Project>
+      <Name>Bitsie.Shop.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\layout\" />
+    <Folder Include="Resources\drawable\" />
+    <Folder Include="Resources\values\" />
+    <Folder Include="Assets\fonts\" />
+    <Folder Include="Resources\values-normal\" />
+    <Folder Include="Resources\values-large\" />
+    <Folder Include="Resources\raw\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTStd-Bd.otf" />
+    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTStd-Cn.otf" />
+    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTStd-Md.otf" />
+    <AndroidAsset Include="Assets\fonts\HelveticaNeueLTStd-MdCn.otf" />
+  </ItemGroup>
+</Project>

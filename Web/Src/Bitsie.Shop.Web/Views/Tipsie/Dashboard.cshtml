@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Tipsie";
+}
+
+<div id="tipsie" class="contentWrapper page">
+    
+    <div class="container whitebg">
+        <div class="row wallet-row">
+            <div class="col-xs-3 wallet-sidebar">
+                <h2>Tipsie Wallet</h2>
+                <ul id="tipsie-nav" class="nav nav-stacked">
+                    <li class="active"><a href="#" id="public-address">Tipsie Card</a></li>
+                    <li><a href="#" id="private-key">Print Private Key</a></li>
+                </ul>
+            </div>
+            
+            <div id="tipsie-container" class="col-xs-9 qr-container">
+                
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        
+        
+
+    </div>
+</div>
+
+<script id="tipsieTemplate" type="text/html">
+    <blockquote>Your Tipsie address is displayed below. <br />Print it out and present it to your customers to receive tips.</blockquote>
+
+    <div class="qrcode-wrapper">
+        <div class="bitcoin-qr-inner">
+            <div class="bitcoin-qrcode"></div>
+				
+            <a id="public" class="bitcoin-link" href="bitcoin:{{address}}">
+                {{address}}
+            </a>
+        </div>
+    </div>
+         
+    <div class="align-center">
+        <a class="btn btn-success" href="/tipsie/print?address={{address}}" id="print-card">Print Card</a>
+    </div>
+
+</script>
+
+<script id="privateKeyTemplate" type="text/html">
+    <p class="align-center">Your <span class="text-danger">private key</span> is displayed below. Scan this into your bitcoin wallet to retrieve your tips.</p>
+     
+
+            <div class="bitcoin-qrcode align-center"></div>
+            
+            <a id="private" class="bitcoin-link" href="bitcoin:{{privateKey}}">
+                {{privateKey}}
+            </a>
+
+</script>
+
+<script id="loaderTemplate" type="text/html">
+    <div class="align-center"><img src="@Url.Content("~/Content/img/ajax-loader-orange.gif")" alt="Loading..." /></div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+
+        var address = null;
+
+        showLoader();
+
+        $('#tipsie-nav a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        })
+
+        function showLoader() {
+            var html = Bitsie.Shop.Template('#loaderTemplate');
+            $('#tipsie-container').html(html);
+        }
+
+        function showPublicAddress() {
+            var html = Bitsie.Shop.Template('#tipsieTemplate', { address: address.Address });
+            $('#tipsie-container').html(html);
+            generateQrCode('#public');
+        }
+
+        // Load address
+        Bitsie.Shop.Api.get('/Api/OfflineAddress/Get', null, function (resp) {
+            address = resp.OfflineAddresses[resp.OfflineAddresses.length - 1];
+            showPublicAddress();
+        });
+
+        // Print tipsie card
+        $('#tipsie-container').on('click', '#print-card', function (e) {
+            e.preventDefault();
+            var printWindow = window.open(this.href, '', 'width=500,height=600');
+            printWindow.focus();
+            printWindow.print();
+        });
+
+        // Show public address
+        $('#public-address').click(function (e) {
+            e.preventDefault();
+            showPublicAddress();
+        });
+
+        // Show private key
+        $('#private-key').click(function (e) {
+            e.preventDefault();
+            showLoader();
+            Bitsie.Shop.Api.get('/Api/Wallet/GetPrivateKey?address=' + address.Address, null, function (privateKey) {
+                var html = Bitsie.Shop.Template('#privateKeyTemplate', {
+                    privateKey: privateKey
+                });
+                $('#tipsie-container').html(html);
+                generateQrCode('#private');
+            });
+        });
+
+        function generateQrCode(linkId) {
+            var lnk = $(linkId);
+            var data = lnk.attr("href");
+            lnk.siblings('.bitcoin-qrcode').qrcode({
+                text: data,
+                width: 175,
+                height: 175
+            });
+        }
+        
+    </script>
+}

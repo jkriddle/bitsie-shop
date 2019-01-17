@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcMonkey.Console", "ProcMonkey.Console\ProcMonkey.Console.csproj", "{289EAE86-BF61-4008-A2C8-75D8276BF646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcMonkey.Lib", "ProcMonkey.Lib\ProcMonkey.Lib.csproj", "{1B826B8A-7A89-4483-B5E5-5BBC5C47B36F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{289EAE86-BF61-4008-A2C8-75D8276BF646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289EAE86-BF61-4008-A2C8-75D8276BF646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289EAE86-BF61-4008-A2C8-75D8276BF646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289EAE86-BF61-4008-A2C8-75D8276BF646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B826B8A-7A89-4483-B5E5-5BBC5C47B36F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B826B8A-7A89-4483-B5E5-5BBC5C47B36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B826B8A-7A89-4483-B5E5-5BBC5C47B36F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B826B8A-7A89-4483-B5E5-5BBC5C47B36F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

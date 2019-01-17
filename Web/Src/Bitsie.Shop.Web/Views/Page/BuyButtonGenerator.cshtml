@@ -1,0 +1,133 @@
+﻿@{
+    ViewBag.Title = "Bitsie Shop Buy Button Generator";
+}
+
+<div class="contentWrapper page">
+    
+    <div class="container whitebg">
+    
+        <h2>Bitsie Shop Buy Button</h2>
+        <h2>No account needed.</h2>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <p>The Bitsie Shop Buy Button is a simple widget that you can put on your site that allows customers to easily pay you with Bitcoin. It is easy to configure and customize.
+                    There is no account needed to use the Buy Button, however you are missing out on all the great features like order tracking, product management and invoicing, amongst others.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-xs-12 display-none">
+            <!-- Signed in Buy Button -->
+            <a href="#" class="bitsie-buy-button" data-title="Radiohead" data-description="This is an album description" data-price=".25">Buy Now</a>            
+        </div>
+
+        <div class="row buy-button-container">
+            <div class="col-xs-5">
+                <div class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <label class="control-label text-left">Public Address</label>
+                            <input data-ref="address" class="public-address form-control" />                      
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Title</label>
+                        <input data-ref="title" class="form-control buy-button-title" value="Title" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Description</label>
+                        <textarea data-ref="description" class="form-control buy-button-description">Description...</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Price</label>
+                        <input data-ref="amount" class="form-control buy-button-price" value="30.00" type="number" />
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <button class="generate-btn btn btn-success btn-block btn-lg">Generate Button</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-xs-offset-1 well">
+                <h4 class="text-center">Preview Pane</h4>
+                <div class="bitsie-buy-button-container">                    
+                    <div class="col-xs-12 col-xs-6 qrcode-container"></div>
+                    <div class="col-xs-12 col-xs-6">
+                        <h3 class="title">Title</h3>
+                        <p class="description"><em>Description...</em></p>
+                        
+                        <div class="col-xs-12">
+                            <h3 class="price text-center col-xs-12">$<span class="amount">30.00</span></h3>
+                        </div>
+                         <a href="#" class="bitsie-buy-button col-xs-12" data-title="Radiohead" data-description="This is an album description" data-price=".25">Purchase</a>
+                                               
+                    </div>    
+                    <div class="clearfix"></div>                
+                </div> 
+                <div class="row">
+                    <div class="col-xs-12">
+                        <textarea id="buy-button-embed-code" class="col-xs-12">
+                            <iframe src="http://localhost:55354/page/view/buybutton"></iframe>
+
+                        </textarea>
+                    </div>                 
+                </div>
+
+                <iframe frameBorder="0" scrolling="no" width="520" height="260" width="" src="http://localhost:55354/page/view/buybutton"></iframe>
+                              
+            </div>            
+        </div>
+    </div>
+</div>
+
+<div style="margin-bottom:168px"></div>
+
+
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+
+            var title = $(".bitsie-buy-button-container .title").html();
+            var price = $(".bitsie-buy-button-container .price").html();
+            var description = $(".bitsie-buy-button-container .description").html();
+
+            $(".buy-button-container").on("click", ".generate-btn", function () {
+                var address = $(".public-address").val();
+                createQRCode(address);
+            });
+
+            $(".buy-button-container").on("keyup mouseup", "input, textarea", function (e) {
+                var ref = $(this).data('ref');                
+                var content = $(this).val();
+                generateButton(ref, content);
+            });
+
+
+            function generateButton(ref, content) {
+                 $(".bitsie-buy-button-container ." + ref).html(content);
+            };
+
+            function updateCode() {
+
+                var price = $("price").val();
+            };
+
+            $(".qrcode-container").qrcode({
+                text: '',
+                width: 220,
+                height: 220
+            });
+
+            function createQRCode(address) {
+                $(".qrcode-container").qrcode({
+                    text: address,
+                    width: 220,
+                    height: 220
+                });                
+            };
+        });
+    </script>
+} 

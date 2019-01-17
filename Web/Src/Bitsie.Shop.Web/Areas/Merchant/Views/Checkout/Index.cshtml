@@ -1,0 +1,208 @@
+@using Bitsie.Shop.Domain
+@model Bitsie.Shop.Web.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+}
+
+
+<div class="page @if (Model.IsMobile){<text>mobile-merchant span12</text>}">
+
+    @Html.Partial("_Header")
+
+    @if (Model.Order == null)
+    {
+        @Html.Partial("_OrderForm", Model)
+    }
+    else
+    {
+        @Html.Partial("_PaymentForm", Model)
+    }
+    
+</div>
+
+<script type="text/javascript">
+    ($(function () {
+        var merchantId = '@Model.Merchant.MerchantId',
+            orderNumber = null,
+            orderDate = null,
+            isProcessing = false,
+            statusInterval = null,
+            previousBalance = null,
+            previousStatus = null,
+            timerInterval = null,
+            invoiceNumber = Bitsie.Shop.QueryString.invoice,
+            freshbooksEnabled = @(Model.FreshbooksEnabled ? "true" : "false")
+            bitsieInvoice = @(Model.Invoice != null ? "true" : "false" );
+      
+        var invoiceTemplate = Bitsie.Shop.Template('#invoiceTemplate');
+        var entryTemplate = Bitsie.Shop.Template('#entryTemplate');
+        var freshbooksTemplate = Bitsie.Shop.Template('#freshbooksTemplate');
+
+        $('#form-placeholder').on('click', '.invoice-help', function (e) {
+            e.preventDefault();
+            bootbox.alert(Bitsie.Shop.Template('#invoiceHelpTemplate'));
+        });
+
+        $('#form-placeholder').on('click', '.freshbooks-toggle', function (e) {
+            e.preventDefault();
+            var freshbooksHidden = $('#form-invoice').is(":visible");
+            if (freshbooksHidden) {
+                $('#form-placeholder').html(freshbooksTemplate);
+            } else {
+                $('#form-freshbooks').html(entryTemplate);
+            }
+        });
+
+        if (bitsieInvoice) {
+            $('#form-placeholder').html(invoiceTemplate);
+        } else if (freshbooksEnabled) {
+            $('#form-placeholder').html(freshbooksTemplate);
+        } else {
+            $('#form-placeholder').html(entryTemplate);
+        }
+        
+        if (!freshbooksEnabled) $('.freshbooks').hide();
+
+        @if (Model.Order != null)
+        {
+            <text>
+                orderNumber = '@Model.Order.OrderNumber';
+                orderDate = moment.utc('@Model.Order.OrderDate.ToString("o")');
+
+                // Ridiculous way to add 15 minutes...
+                var m2 = moment.utc(orderDate).toDate();
+                m2 = new Date(m2.getTime() + 15*60000);
+                m2.setTime( m2.getTime() + m2.getTimezoneOffset()*60*1000 );
+                endTime = moment.utc(m2);
+            </text>
+        }
+
+        var order = new Order();
+            
+        order.subscribe(order.ORDER_CREATED, function (resp) {
+           if (resp.Success) {
+                window.location = '/' + merchantId + '/checkout?orderNumber=' + resp.Order.OrderNumber;
+                return;
+            }
+            bootbox.alert(resp.Errors.join('<br />'));
+            $('#checkout').form('enable');
+        });
+
+        order.subscribe(order.ORDER_UPDATED, function (resp) {
+            if (isProcessing) return;
+            isProcessing = true;
+            currentOrder = resp;
+
+            // Check expired
+            var diff = getDiff();
+            if ($.inArray(resp.Order.Status, [3,4,7]) == -1
+                && diff.unix() <= 0) {
+                showExpired(resp.Order);
+                clearInterval(statusInterval);
+                clearInterval(timerInterval);
+                return;
+            }
+
+            if (resp.Order.Status != previousStatus || resp.Order.BtcPaid != previousBalance) {
+                previousStatus = resp.Order.Status;
+                previousBalance = resp.Order.BtcPaid;
+                console.log(resp.Order.Status);
+                switch (resp.Order.Status) {
+                    case 3:
+                    case 4:
+                    case 6:
+                    case 7:
+                        showReceipt(resp.Order);
+                        clearInterval(statusInterval);
+                        clearInterval(timerInterval);
+                        return;
+                        break;
+                    case 1:
+                    case 2:
+                        showPaymentForm(resp);
+                        break;
+                    case 5:
+                        showExpired(resp.Order);
+                        clearInterval(statusInterval);
+                        clearInterval(timerInterval);
+                        return;
+                        break;
+                }
+            }
+
+            isProcessing = false;
+        });
+
+        // CREATE ORDER
+        $('#checkout').validate({
+            submitHandler: function (form) {
+                $('#checkout').form('disable');
+                var param = $(form).serializeObject();
+                param.MerchantId = merchantId;
+                if (!param.InvoiceNumber) param.InvoiceNumber = invoiceNumber;
+                param.OrderType = '@Bitsie.Shop.Domain.OrderType.HostedCheckout';
+                order.create(param);
+            }
+        });
+
+        // PAYMENT
+        function showPaymentForm(orderData) {
+            var html = Bitsie.Shop.Template('#paymentFormTemplate', orderData);
+            $('#payment-form').html(html);
+            generateQrCode();
+        }
+
+        function showReceipt(orderData) {
+            var html = Bitsie.Shop.Template('#receiptTemplate', orderData);
+            $(".order-loader").hide();
+            $(".header-check").show();
+            $('#payment-form').html(html);
+        }
+
+        function showExpired(orderData) {
+            var html = Bitsie.Shop.Template('#expiredTemplate', orderData);
+            $('#payment-form').html(html);
+        }
+
+        function generateQrCode() {
+            var lnk = $('.bitcoin-link');
+            var data = encodeURI(lnk.attr("href"));
+            $('.bitcoin-qrcode').qrcode({
+                text: data,
+                width: 220,
+                height: 220
+            });
+        }
+
+        function updateStatus() {
+            order.update(orderNumber);
+        }
+
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
+        function getDiff() {
+            var now = moment().utc();
+            return moment.utc(endTime.diff(now));
+        }
+
+        function updateTimer() {
+            var diff = getDiff();
+            if (diff.unix() <= 0) {
+                return;
+            }
+            $('#timer').html(pad(diff.get('minutes'), 2) + ':' + pad(diff.get('seconds'), 2));
+        }
+
+        if (orderNumber) {
+            updateTimer();
+            generateQrCode();
+            statusInterval = setInterval(updateStatus, 2000);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+            
+    }));
+</script>

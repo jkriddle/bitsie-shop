@@ -1,0 +1,75 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Account Settlement > GoCoin";
+}
+
+<div id="content-header">
+    <h1>Settlement</h1>
+</div>
+
+<div class="container-fluid">
+    <form id="settlementForm" action="#" method="post" class="row-fluid">
+        <div class="span12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>GoCoin Settlement</h5>
+                </div>
+                <div class="widget-content padding">
+                </div>
+            </div>
+
+        </div>	
+    </form>
+</div>
+
+<script id="settlementTemplate" type="text/html">
+    <div class="form form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Connect Account</label>
+            <div class="col-sm-7">
+                {{#if GoCoinAccessToken}}
+                    Account is connected. @Html.ActionLink("Disable", "GoCoin", "OAuth", new { @area="", disable = true }, null)
+                {{else}}
+                    <a href="/OAuth/GoCoin" class="btn btn-success">Connect GoCoin Account</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var id = Bitsie.Shop.QueryString.id;
+            var settlementForm = $('#settlementForm');
+            var message = $('.alert', settlementForm);
+            var user = new User();
+            var userData = null;
+
+            // Show overlay
+            $('.widget-content', settlementForm).form('overlay');
+
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#settlementTemplate', userData);
+                $('.widget-content', settlementForm).html(html);
+                $('.widget-content', settlementForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getSecure(id);
+
+            function reload() {
+                user.getOne(id);
+            }
+
+        }));
+    </script>
+} 

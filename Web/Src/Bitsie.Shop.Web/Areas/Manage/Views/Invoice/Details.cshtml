@@ -1,0 +1,228 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Invoice Details";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">        
+            <h1>INVOICE <span>DETAILS</span></h1>    
+        </div>
+    
+        <div class="col-xs-7 form-horizontal">
+            <form id="edit-invoice-form">
+                <div class="widget-content"></div>    
+            </form>        
+        </div>
+
+        <div class="col-xs-2"></div>
+        <div id="right-admin-submenu" class="col-xs-3 disabled">
+            <a href="#" target="_blank" id="view-invoice-btn" class="btn btn-info col-xs-12"><i class="fa fa-file-o"></i>VIEW</a>
+            <a href="#" target="_blank" id="edit-invoice-btn" class="btn btn-success col-xs-12"><i class="fa fa-edit"></i>EDIT</a>
+            <a id="send-invoice" class="btn btn-primary col-xs-12"><i class="fa fa-send"></i>SEND</a>
+            <div class="col-xs-12 submenu-status">
+                <p class="sendDate display-none"><em>Sent on</em>&nbsp; <span></span></p>
+                <div class="alert display-none text-center"></div>                
+            </div>
+            
+        </div>
+    
+        <div class="col-xs-9">
+            <h3>Invoice Items</h3>
+            <table id="invoice-item-table" class="table table-striped table-condensed col-xs-12">
+                <thead>
+                    <tr>
+                        <th class="col-xs-1">Quantity</th>
+                        <th class="col-xs-6">Description</th>
+                        <th class="col-xs-2">$ Amount</th>
+                        <th class="col-xs-1">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                       
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right">TOTAL:</td>
+                        <td colspan="1" class="grand-total"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+</div> <!-- closing tag for main container (in shared layout) -->
+
+
+
+<script id="InvoiceItemTemplate" type="text/html">
+    {{#each .}}
+    <tr class="invoice-item text-center">
+        <td>{{Quantity}}</td>
+        <td>{{Description}}</td>
+        <td>{{UsdAmount}}</td>
+        <td class="itemTotal">{{itemTotal Quantity UsdAmount}}</td>
+    </tr>
+    {{/each}}
+</script>
+
+<script id="invoiceDetailsTemplate" type="text/html">
+    <div class="form-group">
+        <label class="col-xs-3"for="exampleInputEmail1">Invoice #</label>
+        <div class="col-xs-9">
+            {{InvoiceNumber}}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="amount">Customer</label>
+        <div class="col-xs-9">
+            <div class="customer-info">
+                        
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-xs-3" for="dueDate">Due Date</label>
+        <div class="col-xs-9">
+            {{toDate DueDate}}
+        </div>
+    </div>
+        
+    <div class="form-group">
+        <label class="col-xs-3" for="amount">Description</label>
+        <div class="col-xs-9">
+            {{Description}}
+        </div>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var invoiceForm = $('#edit-invoice-form');
+            var message = $('.alert');
+            var invoice = new Invoice();
+            var customer = new User();
+            var customerList = null;
+            var customerFilter = new SearchFilter();
+            var selecetedCustomerId = null;
+
+            //edit invoice link
+            $("#edit-invoice-btn").attr("href", "/Manage/Invoice/Edit?id=" + id);
+            // Show overlay
+            $('.widget-content', invoiceForm).form('overlay');
+
+
+            invoice.subscribe(invoice.INVOICE_RETRIEVED, function (resp) {
+                if (resp.Invoice.Status == 3) {
+
+                    $(".alert").html('<i class="fa fa-check"></i>&nbsp; PAID');
+                    $(".alert").addClass('alert-success').removeClass('display-none');
+                }else {
+                    $("#right-admin-submenu").removeClass('disabled');
+                }
+                selectedCustomerId = resp.Invoice.CustomerId;
+                
+                if (resp.Invoice.SendDate != "") {
+                    $(".sendDate").removeClass('display-none');
+                    $(".sendDate span").html(resp.Invoice.SendDate);
+                }
+                
+                $("#view-invoice-btn").attr("href", "/" + resp.Invoice.MerchantId + "/checkout/?invoice=" + resp.Invoice.InvoiceGuid);
+                var html = Bitsie.Shop.Template('#invoiceDetailsTemplate', resp.Invoice);
+                $('.widget-content', invoiceForm).html(html);
+                $('.widget-content', invoiceForm).form('overlay-hide');
+                
+                //items
+                var html = Bitsie.Shop.Template('#InvoiceItemTemplate', resp.Invoice.InvoiceItems);
+                $("#invoice-item-table tbody").html(html);
+                var total = 0;
+                $(".itemTotal").each(function () {
+                    var currValue = $(this).html();
+                    total += +currValue;
+                });
+                $(".grand-total").html("$ " + total);
+                customer.get();
+            });
+            
+            function setCustomer(customerId) {                
+                //get customer from customer list
+                for (var i in customerList.Users) {
+                    var customer = customerList.Users[i];
+                    if(customer.UserId == customerId) {
+                        $(".customer-info").html(customer.FirstName + '' + customer.LastName + '<br/>' + '<a href="mailto:' + customer.Email + '" target="_blank">' + customer.Email + '</a>');
+                    }
+                }
+            }
+
+            
+            //-------------------------------------------------------------------
+            // CUSTOMER DROPDOWN/ADD
+
+            // Num per page selection
+            $('#customer-entry-select').select2({
+                placeholder: "Select a customer",
+                allowClear: true
+            });
+            
+            $('#customer-entry-select').select2('destroy');
+            $('#customer-entry-select').prop('disabled', true);
+            $('#customer-entry-select').select2();
+
+            //retrieve customer list, then get invoice
+            customer.subscribe(customer.MESSAGE_LIST, function (resp) {
+                customerList = resp;
+                setCustomer(selectedCustomerId);
+            });
+            
+            // Load invoice
+            invoice.getOne(id);
+            
+            customer.subscribe(customer.MESSAGE_CREATED, function (resp) {
+                if (resp.Success == true) {
+                    $("#create-customer-dialog").modal("hide");
+                    $(this).closest('form').find("input[type=text], textarea").val("");
+                    customer.get();
+                }
+
+                if (resp.Success == false) {
+                    var html = "<ul>";
+                    for (var e = 0; e < resp.Errors.length; e++) {
+                        html += "<li>";
+                        html += resp.Errors[e];
+                        html += "</li>";
+                    }
+                    html += "</ul>";
+                    $("#add-customer-alert").append(html);
+                    $("#add-customer-alert").alert();
+                    $("#add-customer-alert").show();
+                }
+            });
+
+            $("#save-customer-info").click(function (e) {
+                var param = $('#create-customer-dialog form').serializeObject();
+                customer.create(param);
+            });
+
+            invoice.subscribe(invoice.INVOICE_SENT, function (resp) {
+                console.log(resp);
+                if (resp.Success == true) {
+                    message.hide().removeClass('alert-danger')
+                    .addClass('alert-success').html('Invoice Sent').fadeIn();
+                } else {
+                    message.hide().removeClass('alert-success')
+                    .addClass('alert-danger').html(resp.Errors[0]).fadeIn();
+                }
+            });
+            $("#send-invoice").click(function(e) {
+                invoice.send(id);
+            });
+
+        }));
+    </script>
+} 

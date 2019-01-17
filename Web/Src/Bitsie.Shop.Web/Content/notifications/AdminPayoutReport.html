@@ -1,0 +1,24 @@
+<p>A new payout was sent on {{Payout.DateProcessed}} via Bitsie Shop.</p>
+
+<p>
+  Transaction ID: <a target="_blank" href="http://blockchain.info/tx/{{Payout.TransactionId}}">http://blockchain.info/tx/{{Payout.TransactionId}}</a>
+</p>
+
+<table cellpadding="5" cellspacing="0" border="1">
+    <tr>
+        <th>Order Address</th>
+        <th>Payout Address</th>
+        <th>Amount</th>
+    </tr>
+    {{#each Orders}}
+    <tr>
+        <td>{{PaymentAddress}}</td>
+        <td>{{User.Settings.PaymentAddress}}</td>
+        <td>{{Total:C}} ({{BtcTotal:N8}} BTC)</td>
+    </tr>
+    {{/each}}
+    <tr>
+        <td colspan="2">Total</td>
+        <td>{{Payout.PayoutAmount:C}}</td>
+    </tr>
+</table>

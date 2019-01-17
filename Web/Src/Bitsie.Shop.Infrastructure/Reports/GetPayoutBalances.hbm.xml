@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Bitsie.Shop.Domain"
+	                 namespace="Bitsie.Shop.Domain">
+
+  <sql-query name="GetPayoutBalances" callable="true">
+    <query-param name="PaymentMethod" type="int" />
+    <query-param name="StartDate" type="datetime" />
+    <query-param name="EndDate" type="datetime" />
+
+    exec GetPayoutBalances
+    @startDate = :StartDate,
+    @endDate = :EndDate
+  </sql-query>
+</hibernate-mapping>

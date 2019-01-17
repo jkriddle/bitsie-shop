@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#f7931a">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/nav_border"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <ImageView
+            android:src="@drawable/nav_logo"
+            android:layout_width="match_parent"
+            android:layout_gravity="left"
+            android:scaleType="fitStart"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView1" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:columnCount="2"
+        android:layout_height="wrap_content"
+        android:weightSum="1.0"
+        android:layout_marginBottom="20dp"
+        android:background="#ffffff">
+        <TextView
+            android:text="make a payment"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/bitsie:orange"
+            android:gravity="left"
+            android:id="@+id/textView1" />
+    </LinearLayout>
+    <ImageView
+        android:src="@android:drawable/ic_menu_gallery"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/qrCodeImage" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom">
+        <LinearLayout
+            android:background="@color/bitsie:orange"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="0dp"
+            android:columnCount="1"
+            android:layout_alignParentBottom="true"
+            android:paddingTop="10dp"
+            android:weightSum="1.0"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_height=".5dip"
+                android:layout_width="fill_parent"
+                android:layout_marginBottom="15dp"
+                android:background="#ffffff" />
+            <TextView
+                android:text="total"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="italic"
+                android:gravity="left"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="1dp"
+                android:textColor="#FFFFFF"
+                android:id="@+id/totalLabel" />
+            <TextView
+                android:text="$0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="@dimen/text_size_medium"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:id="@+id/priceText" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

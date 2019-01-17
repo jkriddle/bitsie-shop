@@ -1,0 +1,17 @@
+﻿@model Bitsie.Shop.Web.Models.BaseMerchantViewModel
+@{
+    Layout = "~/Views/Shared/_Merchant.cshtml";
+}
+
+@* Do not use merchant style settings if viewing invoice generated from HTML5 app *@
+@if (!Model.IsMobile)
+{
+    <style type="text/css">
+        body {
+            background: @Model.Merchant.Settings.BackgroundColor;
+        }
+
+    </style>
+}
+
+{{template}}

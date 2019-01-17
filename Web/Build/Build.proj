@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- *********************  CONFIGURATION *************************  -->
+  <PropertyGroup>
+      <Environment>Development</Environment>
+      <Major>1</Major>
+      <Minor>0</Minor>
+      <Build>0</Build>
+      <Revision>1</Revision>
+
+      <SolutionName>Bitsie.Shop</SolutionName>
+
+      <!-- Paths -->
+      <CheckoutRoot>D:\Projects\bitsie-shop\Web</CheckoutRoot>
+      <BuildPath>$(CheckoutRoot)\BuildSystem</BuildPath>
+      <WebAppPath>$(CheckoutRoot)\Src\$(SolutionName).Web</WebAppPath>
+      <DropsPath>D:\Temp\</DropsPath>
+
+      <!-- MS Deploy Tranforation/Setup -->
+      <MSDeployPath>C:\Program Files\IIS\Microsoft Web Deploy V2\msdeploy.exe</MSDeployPath>
+
+      <TransformInputFile>$(WebAppPath)\Web.config</TransformInputFile>
+      <TransformFile>$(WebAppPath)\Web.$(Environment).config</TransformFile>
+      <TransformOutputFile>$(CheckoutRoot)\Drops\Web.$(Environment).config</TransformOutputFile>
+
+      <NHibInput>$(WebAppPath)\NHibernate.config</NHibInput>
+
+      <MaintenanceWebFilePath>$(WebAppPath)\Maintenance.htm</MaintenanceWebFilePath>
+      <MaintenanceWebConfigPath>$(WebAppPath)\Maintenance.config</MaintenanceWebConfigPath>
+
+      <!--SQL Backup Configuration-->
+      <SQLBackup>Scripts\SQLBackup.sql</SQLBackup>
+      <ConnectionString>Server=atlantis.theriddlebrothers.net\MSSQL2008;Initial Catalog=Shop; User ID=Shop; Password=55n371WP1OZtCkJ</ConnectionString> 
+      <BackupDirectory>E:\Backups\</BackupDirectory>
+
+      <!-- Folder to place all scripts that will be run when deployed -->
+      <SQLScripts>Scripts\Deploy\*.sql</SQLScripts>
+
+  </PropertyGroup>
+
+  <!-- MS Deploy -->
+  <PropertyGroup Condition="'$(Environment)' == 'Development'">
+    <ServerApplicationRoot>e:\inetpub\sites\dev.shop.bitsie.com</ServerApplicationRoot>
+    <AppName>dev.shop.bitsie.com</AppName>
+    <DBHost>mssql1206.wc1\inst2</DBHost>
+    <DBName>Shop_Dev</DBName>
+    <DBUser>Shop</DBUser>
+    <DBPass>55n371WP1OZtCkJ</DBPass>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Environment)' == 'QA'">
+    <ServerApplicationRoot>e:\inetpub\sites\staging.shop.bitsie.com</ServerApplicationRoot>
+    <AppName>staging.shop.bitsie.com</AppName>
+    <DBHost>mssql1206.wc1\inst2</DBHost>
+    <DBName>933580_shopqa</DBName>
+    <DBUser>933580_bitsieqa</DBUser>
+    <DBPass>odZVhaD68QrBrhSh</DBPass>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Environment)' == 'Production'">
+    <ServerApplicationRoot>e:\inetpub\sites\shop.bitsie.com</ServerApplicationRoot>
+    <AppName>shop.bitsie.com</AppName>
+    <DBHost>mssql1206.wc1\inst2</DBHost>
+    <DBName>933580_shop</DBName>
+    <DBUser>933580_shop</DBUser>
+    <DBPass>FNLsbUXLr38DXcRF</DBPass>
+  </PropertyGroup>
+
+
+  <!-- *********************  END CONFIGURATION *************************  -->
+
+
+  <!-- Imports -->
+  <Import Project="$(CheckoutRoot)\BuildSystem\BuildSystem.proj" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+
+
+  <Target Name="Run">
+    <CallTarget Targets="UpdateAssemblies" />
+    <CallTarget Targets="Package" />
+    <CallTarget Targets="MergeConfig" />
+  </Target>
+
+
+  <!-- Update assembly with version number -->
+  <Target Name="UpdateAssemblies">
+    <FileUpdate Files="$(CheckoutRoot)\Common\AssemblyVersion.cs"
+       Regex="(\d+)\.(\d+)\.(\d+)\.(\d+)"
+       ReplacementText="$(Major).$(Minor).$(Build).$(Revision)" />
+  </Target>
+
+
+  <!-- Configure the web.config file for this environment -->
+  <Target Name="MergeConfig">
+    <MakeDir Directories="$(OutputFolder)" Condition="!Exists('$(OutputFolder)')" />
+    <XmlMassUpdate
+          ContentFile="$(TransformInputFile)"
+          ContentRoot="/configuration"
+          SubstitutionsFile="$(TransformFile)"
+          SubstitutionsRoot="/configuration"
+          MergedFile="$(TransformOutputFile)" />
+  </Target>
+
+
+  <!-- Clean source folders -->
+  <Target Name="Clean">
+    <ItemGroup>
+      <BinFiles Include="..\$(SolutionName)\bin\*.*;..\$(SolutionName)\obj\*.*" />
+    </ItemGroup>
+    <Delete Files="@(BinFiles)" />
+  </Target>
+  
+  <Target Name="Package">
+
+    <XmlUpdate
+       Namespace="urn:nhibernate-configuration-2.2"
+       Prefix="n"
+       XmlFileName="$(NHibInput)"
+       XPath="//n:hibernate-configuration/n:session-factory/n:property[@name='connection.connection_string']"
+       Value="Data Source=$(DBHost); Initial Catalog=$(DBName); User ID=$(DBUser); Password=$(DBPass);"
+      />
+    
+    <MSBuild Projects="$(CheckoutRoot)\Src\$(SolutionName).sln"
+             Properties="Platform=Any Cpu;
+              Configuration=Release;
+              DeployOnBuild=True;
+              DeployTarget=Package;
+              DeployIisAppPath=$(AppName);
+              PackageLocation=$(DropsPath)\$(SolutionName).zip;"/>
+  </Target>
+
+
+
+</Project>

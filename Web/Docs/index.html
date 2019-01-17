@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bitsie.Shop Developer Docs</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="assets/css/bootstrap.css" rel="stylesheet">
+        <style type="text/css">
+            body {
+                padding-bottom: 40px;
+                padding-top: 60px;
+            }
+
+            .sidebar-nav { padding: 9px 0; }
+        </style>
+        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="assets/css/docs.css" rel="stylesheet">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"> </script>
+        <![endif]-->
+
+        <!-- Fav and touch icons -->
+        <link rel="shortcut icon" href="assets/ico/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="#">Developer Docs</a>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+
+        <div class="container">
+
+            <div class="row">
+                <!-- Docs nav
+                    ================================================== -->
+                <div class="span3 bs-docs-sidebar">
+                    <ul class="nav nav-list bs-docs-sidenav affix" data-offset-top="100px">
+                        <li class="active"><a href="#intro"><i class="icon-chevron-right"></i> Bitsie.Shop Introduction</a></li>
+                        <li><a href="#start"><i class="icon-chevron-right"></i> Developer Setup</a></li>
+                        <li><a href="#architecture"><i class="icon-chevron-right"></i> Solution Architecture</a></li>
+                        <li><a href="#ui"><i class="icon-chevron-right"></i> User Interface</a></li>
+                        <li><a href="#testing"><i class="icon-chevron-right"></i> Testing</a></li>
+                        <li><a href="#authentication"><i class="icon-chevron-right"></i> Authentication</a></li>
+                        
+                        <li><a href="#config"><i class="icon-chevron-right"></i> Config Service</a></li>
+                        <li><a href="#email"><i class="icon-chevron-right"></i> Email Service</a></li>
+                        <li><a href="#log"><i class="icon-chevron-right"></i> Log Service</a></li>
+                        <li><a href="#mapper"><i class="icon-chevron-right"></i> Mapper Service</a></li>
+                        <li><a href="#notification"><i class="icon-chevron-right"></i> Notification Service</a></li>
+                        <li><a href="#resource"><i class="icon-chevron-right"></i> Resource Service</a></li>
+                        <li><a href="#template"><i class="icon-chevron-right"></i> Template Service</a></li>
+                        <li><a href="#user"><i class="icon-chevron-right"></i> User Service</a></li>
+                    </ul>
+                </div>
+            
+                <!-- Content Container
+                    ================================================== -->
+                <div class="span9">
+
+                    <!-- Bitsie.Shop Intro
+                        ================================================== -->
+                    <section id="Section1">
+                        <div class="page-header">
+                            <h1>Bitsie.Shop Introduction</h1>
+                        </div>
+                        <p class="lead">
+                            Bitsie.Shop is a second release of the former DotFramework solution. It's purpose 
+                            is to provide a baseline framework that can be extended quickly and easily 
+                            to build complex web, mobile and desktop applications.
+                        </p>
+                    
+                        <h2>What is Included</h2>
+                        
+                        <p>Only components that are commonly used across many projects should be included in 
+                        Bitsie.Shop. For example user authentication, payment gateways, email services, etc. 
+                        All components that are integrated into Bitsie.Shop should be <strong>expected to change</strong>. 
+                        For each client installation, many of the core modules will be extended modified, or completely revamped.</p>
+                            
+                        <p>The expectation should be that for any fork of Bitsie.Shop, a developer will be involved in any
+                            changes to the application. Meaning it is okay to have values stored in web.config files rather
+                            than a client-modifiable panel within the admin area. For every change that is made to the 
+                            client's application, a new build will be compiled and released.</p>
+                        
+                        <h2>What Bitsie.Shop Is</h2>
+                        
+                        <ul>
+                            <li>A rapid application development framework</li>
+                            <li>Developer-first</li>
+                            <li>Extendable and scalable</li>
+                        </ul>
+                        
+                        <h2>What Bitsie.Shop Is NOT</h2>
+                        
+                        <ul>
+                            <li>A content mangement system</li>
+                            <li>A turnkey solution</li>
+                            <li>An self-installable solution</li>
+                        </ul>
+
+                    </section>
+
+                    <!-- Getting Started
+                        ================================================== -->
+                    <section id="start">
+                        <div class="page-header">
+                            <h1>Developer Setup</h1>
+                        </div>
+                        <p class="lead">
+                            Follow these steps to get started setting up the Bitsie.Shop framework.
+                        </p>
+                    
+                        <ol>
+                            <li>Run Install/Renamer.exe to rename the solution and all assemblies to an appropriate project name.</li>
+                            <li>Open Src/[ProjectName].sln</li>
+                            <li>Clean and Rebuild.</li>
+                            <li>Create a database and update the connection string in Src/[ProjectName].Web/NHibernate.config accordingly.</li>
+                            <li>Run Src/[ProjectName].Build and specify the type of installation. This will configure/create the database.</li>
+                            <li>Run Src/[ProjectName].Web to launch. If you see the homepage you are good to go.</li>
+                            <li>Run all unit and GUI tests to ensure the core system has been configured and runs properly.</li>
+                            <li>Start coding!</li>
+                        </ol>
+
+                    </section>
+
+                    <!-- Solution Architecture
+                        ================================================== -->
+                    <section id="architecture">
+                        <div class="page-header">
+                            <h1>Solution Architecture</h1>
+                        </div>
+                        <p class="lead">
+                            The Bitsie.Shop codebase uses an n-tier service model, with an MVC presentation layer for the web application. 
+                            The .NET WebAPI framework is used for the internal API that passes data to and from the MVC web application.
+                        </p>
+            
+                        <h2>Project Descriptions</h2>
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Bitsie.Shop.Build</th>
+                                <td>Console application used to generate database schemas, deploy files and setup a specific environment.</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Domain</th>
+                                <td>System-wide POCO domain objects</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Infrastructure</th>
+                                <td>Data layer containing repositories and other data-access components.</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Services</th>
+                                <td>Business layer for validation, data retrieval and any other shared logic.</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Services.Tests</th>
+                                <td>Unit tests for Bitsie.Shop.Services layer</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Web</th>
+                                <td>Web and API layer. Both the web application and API are included in the same layer so that they may operate under a single domain/site.</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Web.Tests</th>
+                                <td>Unit tests for the Bitsie.Shop.Web layer.</td>
+                            </tr>
+                            <tr>
+                                <th>Bitsie.Shop.Web.UI.Tests</th>
+                                <td>Automated UI tests for the Bitsie.Shop.Web layer.</td>
+                            </tr>
+                        </table>
+                    </section>
+                
+                    <!-- User Interface
+                        ================================================== -->
+                    <section id="ui">
+                        <div class="page-header">
+                            <h1>User Interface</h1>
+                        </div>
+
+                        <p class="lead">
+                            Javascript in the Web Presentation project uses prototypal standards based on John Resig's minimial framework for JS inheritence. 
+                            The presentation layer uses a combination of jQuery, jQuery UI and Twitter Bootstrap plugins. 
+                        </p>
+                        
+                        <h2>File Organization</h2>
+                        
+                        <p>There are three areas for JavaScript files:</p>
+                        
+                        <ol>
+                            <li><strong>/Content/js</strong> - Place any core libraries here that do not have other dependencies, or are used by additional plugins.</li>
+                            <li><strong>/Content/js/plugins</strong> - Plugins that use one of the core libraries from the location above.</li>
+                            <li><strong>/Content/js/app</strong> - Custom Bitsie.Shop application code and modules.</li>
+                        </ol>
+
+                        <h2>Domain Objects</h2>
+
+                        <h3>Observer Pattern</h3>
+                        
+                        <p>Domain objects for individual API interactions (i.e. Users, Logs, etc) follow an Observer pattern 
+                            to delegate UI interactions back to the calling page. The objects that are created within the page observe 
+                            the domain object for any notifications after data is retrieved.
+                        </p>
+                        
+                        <h3>Example</h3>
+
+                        <pre class="prettyprint linenums">
+var Sample = Observer.extend({
+    // Sample retrieval of data from API
+    get: function (opt) {
+        var self = this;
+        Api.get("/Api/Log/Get", opt, function (resp) {
+            // If we need to do anything at a business or data level with the response, do it here.
+            // Then notify observers of completed request
+            self.notify('sample-request', resp);
+        });
+    }
+});
+                            
+var mySample = new Sample();
+mySample.subscribe('sample-request', function(resp) { 
+    // This is where we take the returned request and bind it to the DOM,
+    // update the UI or anything else we have to do on this page.
+    console.log(resp);
+    alert('Finished request!'); 
+});
+                        </pre>
+                        
+                        <h2>Libraries and Plugins</h2>
+                        
+                        <p>jQuery and Twitter Bootstrap are used heavily throughout the site.  
+                            jQuery UI components are used sparingly as the CSS of jQuery UI
+                            is not compatible with Twitter Bootstrap library (as of Boostrap v2.2.2).
+                        </p>
+                        
+                        <h3>Bootstrap</h3>
+                        
+                        <p>Version 2.2.2 of <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> is currently used.</p>
+                        
+                        <h4>Plugins</h4>
+                        
+                        <table class="table table-bordered">
+                            <tr>
+                                <th id="daterangepicker">Date Range Picker</th>
+                                <td>Creates a popup for selecting a range of dates.</td>
+                                <td><a href="https://github.com/dangrossman/bootstrap-daterangepicker">Source/Docs</a></td>
+                            </tr>
+                            <tr>
+                                <th>Date Picker</th>
+                                <td>Single date selection from a calendar.</td>
+                                <td><a href="https://github.com/eternicode/bootstrap-datepicker">Source/Docs</a></td>
+                            </tr>
+                            <tr>
+                                <th>Toggle Buttons</th>
+                                <td>iOS-style on/off buttons.</td>
+                                <td><a href="https://github.com/nostalgiaz/bootstrap-toggle-buttons">Source/Docs</a></td>
+                            </tr>
+                        </table>
+                        
+                        <h3>jQuery</h3>
+                        
+                        <p>Version 1.8.3 of jQuery is currently used.</p>
+                        
+                        <h4>Plugins</h4>
+                        
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Cookie</th>
+                                <td>Cookie management helper library</td>
+                                <td><a href="https://github.com/carhartl/jquery-cookie">Source/Docs</a></td>
+                            </tr>
+                            <tr>
+                                <th>Live Query</th>
+                                <td>Fires events when elements are created in the DOM.</td>
+                                <td><a href="http://docs.jquery.com/Plugins/livequery">Source/Docs</a></td>
+                            </tr>
+                            <tr>
+                                <th>Select2</th>
+                                <td>Advanced selection dropdown</td>
+                                <td><a href="http://ivaynberg.github.com/select2/">Source/Docs</a></td>
+                            </tr>
+                        </table>
+                        
+                        <h3>Handlebars</h3>
+                        
+                        <p>To manipulate and bind data to DOM and JavaScript elements, the <a href="http://handlebarsjs.com/">Handlebars</a> library is used.</p>
+                        
+                        <h3>Date.js</h3>
+                        
+                        <p>The open source <a href="http://www.datejs.com">Date.js</a> library is used for date manipulation. 
+                            This is a dependency of the <a href="#daterangepicker">Date Range Picker</a> bootstrap library.</p>
+
+                    </section>
+                
+                    <!-- Testing
+                        ================================================== -->
+                    <section id="testing">
+                        <div class="page-header">
+                            <h1>Testing</h1>
+                        </div>
+                        <p class="lead">
+                            The entire solution should have as much code coverage as possible within reason. All major
+                            paths should be tested for <em>successes</em>, rather than for <em>failures</em>.
+                        </p>
+                        
+                        <p>The Bitsie.Shop.Build project uses a "User Inteface" testing option that sets 
+                            up the database to a consistent state so that all UI interactions can be 
+                            tested. The build app should be run before running any UI tests.
+                        </p>
+                        
+                        <h2>Code Coverage</h2>
+
+                        <p>A good rule of thumb is +1 test for every function, +1 for every conditional 
+                            statement path, and one for every defect patch that is made.</p>
+                        
+                        <p>If a defect is logged, a failing unit test should be made for the defect using the expected results. Then 
+                            update the source so that the test passes.</p>
+                        
+                        <h2>UI Testing</h2>
+
+                        <p>A UI test should be made for every primary interaction path for each component. Tests should be run against Internet Explorer due 
+                            to the compatibility of the library, and since IE is typically the least stable environment.
+                        </p>
+                        
+                    </section>
+
+                    
+                    <!-- Authentication
+                        ================================================== -->
+                    <section id="authentication">
+                        <div class="page-header">
+                            <h1>Authentication</h1>
+                        </div>
+
+                        <p>
+                            Bitsie.Shop uses a custom Membership and Role provider with the ASP.NET Membership component. 
+                            Authentication and Roles are passed to the <a href="#user">User Service</a> for validation. 
+                            Bitsie.Shop application is stateful and it is intended that the API and the 
+                            web application reside either on the same server, or in a server farm that shares sessions 
+                            across the network. 
+                        </p>
+                        
+
+                    </section>
+                    
+                    <!-- Config Service
+                        ================================================== -->
+                    <section id="config">
+                        <div class="page-header">
+                            <h1>Config Service</h1>
+                        </div>
+
+                        <p>
+                            The Config Service is a simple wrapper around the standard .NET System.ConfigurationManager. 
+                            It's primary purpose is to allow the ConfigurationManager to be mocked more easily during testing 
+                            and to house any other configuration settings for future builds.
+                        </p>
+
+                    </section>
+                    
+                    <!-- Email Service
+                        ================================================== -->
+                    <section id="email">
+                        <div class="page-header">
+                            <h1>Email Service</h1>
+                        </div>
+                        
+                        <p>
+                            Use the Email Service to send out any emails that will be outgoing from the site. It is a 
+                            simple class that abstracts the way email are sent throughout the application.
+                        </p>
+
+                    </section>
+                    
+                    <!-- Logs
+                        ================================================== -->
+                    <section id="log">
+                        <div class="page-header">
+                            <h1>Logs</h1>
+                        </div>
+
+                        <p>Logs may be used to trace the flow of the application, or individual user activity. 
+                            Typically these are used for security and auditing purposes, but can also be 
+                            used as a web-accessible way to debug exceptions or other issues that arise in 
+                            the site.
+                        </p>
+                        
+                        <p>
+                            It is recommended that any new components added to Bitsie.Shop use the logging service 
+                            for additions, updates and deletions, as well as any attempts at unauthorized use. By 
+                            default any Exceptions that bubble up are logged within the Global.asax.cs file.
+                        </p>
+                        
+                        <h2>Log Categories</h2>
+                        <table class="table table-bordered">   
+                            <tr>
+                                <th>Application</th>
+                                <td>Logs created in the context of the application itself, or in respect to a specific component. 
+                                    The majority of logs are application-level items.
+                                </td>
+                            </tr>   
+                            <tr>
+                                <th>Security</th>
+                                <td>Attempts at unauthorized use, invalid logins and other audits that could be used to 
+                                    block malicious requests.</td>
+                            </tr>  
+                            <tr>
+                                <th>System</th>
+                                <td>Web-server or operating system level logs. These include console applications being launched, 
+                                    errors when interfacing with the OS, or OS-level exceptions.
+                                </td>
+                            </tr> 
+                        </table>
+                        
+                        <h2>Log Levels</h2>
+                        <table class="table table-bordered">   
+                            <tr>
+                                <th>Debug</th>
+                                <td>Log used to assist with debugging issues or defects in production. Add these logs when 
+                                    attempting to profile a problem that cannot be reproduced in a development or staging 
+                                    environment.
+                                </td>
+                            </tr>   
+                            <tr>
+                                <th>Info</th>
+                                <td>General informational logs such as data being created, modified or deleted.</td>
+                            </tr>  
+                            <tr>
+                                <th>Warning</th>
+                                <td>Logs that affect the performance or status of the application, but are not critical 
+                                    failures. If the request can continue to respond or the application can recover from 
+                                    an exception or failure, a warning can be logged to help identify the resolution.
+                                </td>
+                            </tr> 
+                            <tr>
+                                <th>Error</th>
+                                <td>Critical failures that stop the response of the request or application, such as uncaught 
+                                    exceptions that bubble to the presentation layer.
+                                </td>
+                            </tr> 
+                        </table>
+
+                    </section>
+                    
+                    <!-- Mapper 
+                        ================================================== -->
+                    <section id="mapper">
+                        <div class="page-header">
+                            <h1>Mapper Service</h1>
+                        </div>
+                        
+                        <p>
+                            Simple wrapper around AutoMapper library for mapping 
+                            properties from one object to another. 
+                        </p>
+
+                    </section>
+                    
+                    <!-- Mapper 
+                        ================================================== -->
+                    <section id="notification">
+                        <div class="page-header">
+                            <h1>Notification Service</h1>
+                        </div>
+                        
+                        <p>
+                            The Notification Service can be used to send out emails to users. Future 
+                            releases will include internal messages, alerts and text messages.
+                        </p>
+                        
+                        
+                        <p>Notification Services accept a third parameter in the Notify(...) function that 
+                            allows you to specify the data to be used when replacing placeholders within the specified 
+                            template. For more information on templates and embedding placeholders, 
+                            see the <a href="#template">Template Service</a>.</p>
+                        
+                        <h2>Email Notifications</h2>
+                        <p>
+                            Place an XML file containing the contents of the email you would like to send into 
+                            src/Bitsie.Shop.Web/Content/notifications/. Email notifications must use the following 
+                            template:
+                        </p>
+                        
+<pre class="prettyprint linenums">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+&lt;Templates&gt;
+    &lt;Email&gt;
+    &lt;Subject&gt;Email subject here.&lt;/Subject&gt;
+    &lt;Body&gt;
+        &lt;![CDATA[
+            Email body here. Sample {{Placeholder}}
+        ]]&gt;
+    &lt;/Body&gt;
+    &lt;/Email&gt;
+&lt;/Templates&gt;
+</pre>
+                        
+                        <p>
+                            Emails will be sent to the email specified in the User.Email property that is passed 
+                            to the Notify(...) function.
+                        </p>
+
+                    </section>
+
+                    <!-- Resources
+                        ================================================== -->
+                    <section id="resource">
+                        <div class="page-header">
+                            <h1>Resources</h1>
+                        </div>
+
+                        <p>Resources are containers for data such as HTML content, system settings, URLs, etc. It is a generic container that may 
+                            be used across multiple components.
+                        </p>
+                        
+                        <p>
+                            Keep in mind that not every configuration or settings should be stored as a 
+                            Resource. Most API keys can be stored in the web.config file since they shouldn't 
+                            need to be changed without a developer ready to assist with any problems. Thus, 
+                            a rule of thumb is "if this resource were mistyped, would the site 
+                            fail to function?". If so, the item should be a .config file setting. Otherwise, 
+                            especially if it is necessary for the client to frequently change the value of the 
+                            resource value, this is the component that should be used.
+                        </p>
+                        
+                        <h2>Resource Categories</h2>
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Content</th>
+                                <td>Content and strings that will be displayed to users within the web application.</td>
+                            </tr>    
+                            <tr>
+                                <th>Settings</th>
+                                <td>System settings such as API keys, configurations and other administrative options.</td>
+                            </tr>  
+                        </table>
+                        
+                        <h2>Resource Types</h2>
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>String</th>
+                                <td>Basic strings that are referenced by components or directly within the web application.</td>
+                            </tr>    
+                            <tr>
+                                <th>HTML</th>
+                                <td>Blocks of HTML content displayed within the web application.</td>
+                            </tr>  
+                        </table>
+
+                    </section>
+                    
+                    <!-- Template
+                        ================================================== -->
+                    <section id="template">
+                        <div class="page-header">
+                            <h1>Template Service</h1>
+                        </div>
+
+                        <p>
+                            The Template Service is used to read and parse templates that are used 
+                            for notifications or other non-web views. Templates are simple XML files 
+                            containing various sections that correspond to separate pieces of the template 
+                            (for example an email subject vs. the email body).
+                        </p>
+                        
+                        <p>
+                            Placeholders are embedded between double curly braces such as <code>{{Foo}}</code>. 
+                            The templateParams parameter of the ParseTemlpate(...) function contains the data that 
+                            will be used to inject the values into the corresponding placeholders. For example:
+                        </p>
+                        
+<pre class="prettyprint linenums">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+&lt;Template&gt;
+    &lt;Sample&gt;My favorite color is {{Color}}.&lt;/Sample&gt;
+&lt;/Template&gt;
+</pre>
+                        
+                        When using this template, and sending this object as the templateParams parameter:
+                        
+
+<pre class="prettyprint linenums">
+var ob = new {
+    Color = "Blue"    
+}
+</pre>
+                        
+                        <p>The parsed "Sample" section will be <code>My favorite color is Blue.</code></p>
+
+                    </section>
+
+                    
+                    <!-- User Service
+                        ================================================== -->
+                    <section id="user">
+                        <div class="page-header">
+                            <h1>Users</h1>
+                        </div>
+                        
+                        <p>
+                            Any end-user that is registered in the system is considered a User. Users 
+                            can have a single role that defines their core purpose within the application.    
+                        </p>
+
+                        <p>The User Service encompasses all user-relation functionality including 
+                            registration, authentication, and password resets.
+                        </p>
+                        
+                        <h2>Roles</h2>
+                        
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Member</th>
+                                <td>A member is a basic user that has the lowest defined permissions within the 
+                                    application. They are not able to access the management area of the site.</td>
+                            </tr>
+                            <tr>
+                                <th>Administrator</th>
+                                <td>Administrators have the highest level of access and can manage all data within the 
+                                    application, as well as login as other users.
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
+                
+                </div><!--/span9-->
+            </div><!--/row-->
+        </div><!--/container-->
+
+        <footer>
+            <div class="container">
+                <p>&copy; The Riddle Brothers 2013</p>
+            </div>
+        </footer>
+
+
+        <!-- Javascript
+            ================================================== -->
+        <script src="assets/js/jquery.min.js"> </script>
+        <script src="assets/js/bootstrap.min.js"> </script>
+        <script src="assets/js/prettify.js"> </script>
+
+        <script type="text/javascript">
+            $(function () {
+                $('.bs-docs-sidenav').affix();
+                $('.bs-docs-sidenav a').click(function () {
+                    $('.bs-docs-sidenav li').removeClass('active');
+                    $(this).parent('li').addClass('active');
+                });
+
+                // Make code pretty
+                prettyPrint();
+
+            });
+        </script>
+    </body>
+</html>

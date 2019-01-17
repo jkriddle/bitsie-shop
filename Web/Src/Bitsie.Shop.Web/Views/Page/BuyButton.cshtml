@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Bitsie Shop Buy Button";
+    Layout = null;
+}
+
+<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+<link href="/Content/css/bootstrap.3.2.0.css" rel="stylesheet"/>
+<link href="/Content/css/app/buybutton.css" rel="stylesheet" />
+
+<script type="text/javascript" src="/Content/js/jquery.js"></script>
+<script type="text/javascript" src="/Content/js/plugins/buyButton/buybutton.js"></script>
+
+<style>
+    body{
+        background-image:none;
+    }
+</style>
+
+<div class="buy-btn-embed">
+        <div class="bitsie-buy-button-container">   
+            <div class="bitsie-buy-button-container">   
+                <a href="#" class="bitsie-buy-button"  data-merchantid="@Request.QueryString["merchantid"]" data-productid="@Request.QueryString["productid"]"></a>   
+            </div> 
+            
+                             
+            <!-- <div class="col-xs-12">
+                <h4 class="title">@Request.QueryString["title"]</h4>
+                <p class="description"><em>@Request.QueryString["description"]</em></p>             
+                <div class="col-xs-12">
+                    <h3 class="price text-center col-xs-12">$<span class="amount">@Request.QueryString["price"]</span></h3>
+                </div>
+                <a href="#" class="bitsie-buy-button col-xs-12" data-merchantid="@Request.QueryString["merchantid"]" data-productid="@Request.QueryString["productid"]" >Purchase</a>                                 
+            </div>    
+            <div class="clearfix"></div>                
+        </div>      -->     
+</div>        

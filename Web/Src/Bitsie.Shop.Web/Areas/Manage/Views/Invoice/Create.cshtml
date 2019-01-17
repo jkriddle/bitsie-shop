@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Create";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+    <div class="page-header">
+        <h1>INVOICES <span>CREATE</span></h1>    
+    </div>
+    
+        <form id="create-invoice-form" class="col-xs-9 form-horizontal">
+            <div class="widget-content">
+            <div class="form-group">
+                <label class="col-xs-2"for="exampleInputEmail1">Invoice #</label>
+                <div class="col-xs-5">
+                    <input type="number" name="InvoiceNumber" class="form-control" id="invoiceNumber" placeholder="">
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label class="col-xs-2 control-label" for="amount">Customer</label>
+                <div class="col-xs-5 customer-entry-select-container">
+                    <select id="customer-entry-select" name="customerEntry" class="col-xs-12" >
+                        <option value="" disabled selected>Select a customer</option>
+                    </select>
+                </div>
+                <div class="col-xs-1 text-left">
+                    <a href="#" data-target="#create-customer-dialog" role="button" data-toggle="modal" class="customer-list-btn pull-left"><i class="fa fa-plus"></i></a> 
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2" for="dueDate">Due Date</label>
+                <div class="col-xs-10">
+                    <input type="date" name="DueDate" class="form-control" id="dueDate" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group display-none">
+                <label class="col-xs-2" for="amount">Amount (USD)</label>
+                <div class="col-xs-3 invoice-amount">
+                    <span class="pull-left">$</span><input name="USDAmount" class="form-control pull-left" type="text" id="amount" >
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label class="col-xs-2" for="amount">Description</label>
+                <div class="col-xs-10">
+                    <textarea class="form-control" name="Description" type="text" id="description"></textarea>
+                </div>
+            </div>
+                </div>
+        </form>
+    
+
+    
+    <div id="right-admin-submenu" class="col-xs-3">
+        <a id="save-invoice-btn" class="btn btn-success col-xs-12"><i class="fa fa-check"></i>SAVE</a>
+         <div class="col-xs-12 submenu-status">
+            <div class="alert alert-danger display-none text-center"></div>
+        </div>
+    </div>
+
+        <div class="col-xs-9">
+            <h3>Invoice Items</h3>
+            <table id="invoice-item-table" class="table table-striped table-condensed col-xs-12">
+                <thead>
+                    <tr>
+                        <th class="col-xs-1">Quantity</th>
+                        <th class="col-xs-6">Description</th>
+                        <th class="col-xs-2">$ Amount</th>
+                        <th class="col-xs-1">Subtotal</th>
+                        <th class="col-xs-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="invoice-item-template" class="hide invoice-item">
+                        <td><input type="text" class="form-control quantity"/></td>
+                        <td><input type="text" class="form-control description"/></td>
+                        <td><input type="number" class="form-control amount"/></td>
+                        <td class="itemTotal"><input class="form-control" value="0" disabled/></td>
+                        <td>
+                            <a href="#" class="btn btn-warning remove-invoice-item"><i class="fa fa-minus"></i></a>
+                            <a href="#" class="btn btn-success add-invoice-item"><i class="fa fa-plus"></i></a>
+                        </td>
+                    </tr>                       
+                    <tr class="invoice-item">
+                        <td><input type="text" class="form-control quantity"/></td>
+                        <td><input type="text" class="form-control description"/></td>
+                        <td><input type="number" class="form-control amount"/></td>
+                        <td class="itemTotal"><input class="form-control" disabled/></td>
+                        <td>
+                            <a href="#" class="btn btn-warning remove-invoice-item"><i class="fa fa-minus"></i></a>
+                            <a href="#" class="btn btn-success add-invoice-item"><i class="fa fa-plus"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right">TOTAL:</td>
+                        <td class="invoice-total" colspan="1"></td>
+                        <td colspan="1"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+</div>
+</div>
+</div> <!-- end main container (in shared layout) -->
+<div id="create-customer-dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Create Customer</h3>
+            </div>
+            <div class="modal-body">
+                <form id="customer-entry-form">
+                   <div class="form-group">
+                         <label class="control-label">First Name</label>
+                         <input class="form-control" type="text" name="FirstName" placeholder="First Name" />
+                     </div>
+                     <div class="form-group">
+                         <label class="control-label">Last Name</label>
+                         <input class="form-control" type="text" name="LastName" placeholder="Last Name" />
+                     </div>
+                     <div class="form-group">
+                         <label class="control-label">Email</label>
+                         <input class="form-control" type="text" name="Email" placeholder="Customer Email" />
+                     </div>  
+                </form>       
+                <div id="add-customer-alert" class="alert alert-danger display-none" role="alert"></div>
+            </div>
+            <div class="modal-footer">
+                <img id="indicator" class="display-none" src="@Url.Content("~/Content/img/ajax-loader-orange.gif")" alt="" />
+                <a type="button" href="#" class="btn" data-dismiss="modal" aria-hidden="true" >Close</a>
+                <a id="save-customer-info" href="#" class="btn btn-primary">Save</a>
+            </div>
+        </div>
+        </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var invoice = new Invoice();
+            var customer = new User();
+            var customerFilter = new SearchFilter();
+            var selectedCustomerId;
+
+            var invoiceList = new InvoiceList($("#invoice-item-table"), $("#invoice-item-template"));
+
+            customer.subscribe(customer.MESSAGE_LIST, function (resp) {
+                $("#customer-entry-select option:gt(0)").remove().end();
+                $.each(resp.Users, function (key, value) {
+                    var optionText = value.FirstName + " " + value.LastName + ", " + value.Email;
+                    $("#customer-entry-select")
+                    .append($("<option></option>")
+                    .attr("value", value.UserId)
+                    .text(optionText));
+                });
+
+                if (selectedCustomerId != null) {
+                    setCustomerDropdown(selectedCustomerId);
+                }
+
+            });
+
+            function setCustomerDropdown(customerId) {
+                $("#customer-entry-select").val(customerId).trigger("change");
+            }
+
+            invoice.subscribe(invoice.INVOICE_CREATED, function (resp) {
+                if (resp.Success == true) {
+                    $("#save-invoice-btn").attr("disabled", true);
+                    window.location = "/Manage/Invoice/Edit?id=" + resp.Invoice.InvoiceGuid + "#saved";
+                } else {
+                    $(".alert").html('Unable to create invoice.');
+                    $(".alert").append(resp.Errors[0]);
+                    $(".alert").fadeIn();
+                }
+            });
+
+            jQuery.validator.addMethod("DateFormat", function (value, element) {
+                var comp = value.split('-');
+                var d = parseInt(comp[2], 10);
+                var m = parseInt(comp[1], 10);
+                var y = parseInt(comp[0], 10);
+                var date = new Date(y, m, d);
+                if(y.toString().length > 4) {
+                    return false;
+                }
+                if(d.toString().length > 2) {
+                    return false;
+                }
+                if (m.toString().length > 2) {
+                    return false;
+                }
+                if (d > 31) {
+                    return false;
+                }
+                if (m > 12) {
+                    return false;
+                }
+                return true;
+            });
+
+            $("#create-invoice-form").validate({
+                ignore: null,
+                rules: {
+                    InvoiceNumber: "required",
+                    DueDate: "required",
+                    DueDate: { DateFormat: true},
+                    customerEntry: "required",
+                },
+                messages: {
+                    InvoiceNumber: "Please enter an invoice number",
+                    DueDate: "Please enter a Due Date with the format dd/mm/yyyy",
+                    customerEntry: "Please select a customer"
+                },
+                onSubmit: function (e) {
+                    console.loge("submit?");
+                }
+            });
+
+            $("#save-invoice-btn").click(function (e) {
+                e.preventDefault();
+                var param = $("#create-invoice-form").serializeObject();
+                param.CustomerId = $("#customer-entry-select option:selected").val();
+                param.invoiceItems = invoiceList.getInvoiceItemArray();
+                if ($("#create-invoice-form").valid()) {
+                    invoice.create(param);
+                }
+            });
+
+            invoice.subscribe(invoice.INVOICE_COUNT, function (resp) {
+                $("#invoiceNumber").val(resp + 1);
+            });
+            invoice.getCount();
+
+
+            // Num per page selection
+            $('#customer-entry-select').select2({
+                placeholder: "Select a customer",
+                allowClear: true
+            });
+            customer.get();
+            customer.subscribe(customer.MESSAGE_CREATED, function (resp) {
+                if (resp.Success == true) {
+                    $("#create-customer-dialog").modal("hide");
+                    $(this).closest('form').find("input[type=text], textarea").val("");
+
+                    customer.get();
+                    selectedCustomerId = resp.User.UserId;
+                }
+
+                if (resp.Success == false) {
+                    var html = "<ul>";
+                    for (var e = 0; e < resp.Errors.length; e++) {
+                        html += "<li>";
+                        html += resp.Errors[e];
+                        html += "</li>";
+                    }
+                    html += "</ul>";
+                    $("#add-customer-alert").append(html);
+                    $("#add-customer-alert").alert();
+                    $("#add-customer-alert").show();
+                }
+                $('#indicator').hide();
+                $("#save-customer-info").attr("disabled", false);
+            });
+
+            $("#save-customer-info").click(function (e) {
+                $('#indicator').show();
+                $(this).attr("disabled", true);
+                var param = $("#customer-entry-form").serializeObject();
+                customer.create(param);
+            });
+
+        }));
+    </script>
+} 
+
+

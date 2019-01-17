@@ -1,0 +1,188 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Account Settlement > Bitcoin";
+}
+
+
+
+<div class="container-fluid">
+            <div class="col-xs-12">
+    <div class="page-header">
+        <h1>ACCOUNT <span>BITCOIN INTEGRATION</span></h1>
+    </div>
+    <form id="settlementForm" action="#" method="post" class="row-fluid">
+             
+    <div class="alert display-none"></div>
+
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="glyphicon glyphicon-align-justify"></i>									
+                </span>
+                <h5>Bitcoin Settlement</h5>
+            </div>
+            <div class="widget-content padding">
+            </div>
+        </div>
+    </form>
+
+    <div class="col-xs-12 create-wallet">
+        <h2>Create Bitcoin Wallet</h2>
+        <a href="#" id="create-wallet-btn" class="btn btn-success">Create Bitcoin Wallet</a>
+    </div>
+</div>
+
+
+
+
+<!-- HANDLEBARS TEMPLATE FOR BITCOIN SETTLEMENT ADDRESS -->
+<script id="settlementTemplate" type="text/html">
+    <div class="form form-horizontal">
+        <p>Payments will be forwarded to your bitcoin address after three confirmations.</p>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Bitcoin Address</label>
+            <div class="col-sm-7">
+                <input class="form-control" name="PaymentAddress" value="{{PaymentAddress}}" type="text" placeholder="Your bitcoin address" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2"></label>
+            <div class="col-sm-7">
+                <button class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var id = Bitsie.Shop.QueryString.id;
+            var settlementForm = $('#settlementForm');
+            var message = $('.alert', settlementForm);
+            var user = new User();
+            var userData = null;
+
+            // Show overlay
+            $('.widget-content', settlementForm).form('overlay');
+
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#settlementTemplate', userData);
+                $('.widget-content', settlementForm).html(html);
+                $('.widget-content', settlementForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getOne(id);
+
+            function reload() {
+                user.getOne(id);
+            }
+
+            settlementForm.submit(function (e) {
+                e.preventDefault();
+                settlementForm.form('disable');
+                var formData = settlementForm.serializeObject()
+                Bitsie.Shop.Api.post('/api/integrations/bitcoin', formData, function (resp) {
+                    if (resp.Success) {
+                        message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Bitcoin address has been saved. <a href="/manage/user/settlement">Return to Settlement</a>').fadeIn();
+                    } else {
+                        message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                    Bitsie.Shop.scrollTo(0);
+                    settlementForm.form('enable');
+                });
+            });
+
+            user.subscribe(user.MESSAGE_WALLET_CREATED, function (resp) {
+                console.log("wallet created");
+                console.log(resp);
+            });
+
+            /* CREATE BITCOIN WALLET */
+            $(".create-wallet").on("click", "#create-wallet-btn", function (e) {
+                e.preventDefault();
+                createWallet();
+                
+                //user.createWallet();
+            });
+
+            /* -------------------------------------------------------------------------
+            // BIP32 WALLET CREATION
+            //
+            //*/
+            
+            var coin = "btc_main";
+            var COINS = {
+                btc_main: {
+                    name: "Bitcoin",
+                    network: "Mainnet",
+                    prefix: 0,
+                    private_prefix: 0 + 0x80,
+                    bip32_public: BITCOIN_MAINNET_PUBLIC,
+                    bip32_private: BITCOIN_MAINNET_PRIVATE
+                }
+            }
+
+            function createWallet() {
+                var m = new Mnemonic("english");
+                var p = new Mnemonic("english");
+                
+                //generate private key words                
+                var passphrase = p.generate();
+
+                if (m.check(passphrase)) {
+                    var seed = m.toSeed(passphrase);
+                    $(".wallet-passphrase").html("<small>" + passphrase + "</small>");
+                    $("#create-wallet-modal").modal('show');
+                    console.log(seed);
+                } else {
+                    this.createWallet();
+                }
+
+                bip32_passphrase_hash = Crypto.util.bytesToHex(Crypto.SHA256(passphrase, { asBytes: true }));
+                var hasher = new jsSHA(bip32_passphrase_hash, 'HEX');
+                var I = hasher.getHMAC("Bitcoin seed", "TEXT", "SHA-512", "HEX");
+                var il = Crypto.util.hexToBytes(I.slice(0, 64));
+                var ir = Crypto.util.hexToBytes(I.slice(64, 128));
+
+                var gen_bip32 = new BIP32();
+                try {
+                    gen_bip32.eckey = new Bitcoin.ECKey(il);
+                    gen_bip32.eckey.pub = gen_bip32.eckey.getPubPoint();
+                    gen_bip32.eckey.setCompressed(true);
+                    gen_bip32.eckey.pubKeyHash = Bitcoin.Util.sha256ripe160(gen_bip32.eckey.pub.getEncoded(true));
+                    gen_bip32.has_private_key = true;
+
+                    gen_bip32.chain_code = ir;
+                    gen_bip32.child_index = 0;
+                    gen_bip32.parent_fingerprint = Bitcoin.Util.hexToBytes("00000000");
+                    gen_bip32.version = COINS[coin].bip32_private;
+                    gen_bip32.depth = 0;
+
+                    gen_bip32.build_extended_public_key();
+                    gen_bip32.build_extended_private_key();
+                    console.log("PRIVATE");
+                    console.log(gen_bip32.extended_private_key_string("base58"));
+                    console.log("PUBLIC");
+                    console.log(gen_bip32.extended_public_key_string("base58"));
+
+                    var hash160 = gen_bip32.eckey.pubKeyHash;
+                    var addr = new Bitcoin.Address(hash160);
+                    addr.version = key_coin.prefix;
+
+                } catch (err) {
+                    console.log(err);
+                    //setErrorState($('#bip32_source_passphrase'), true, '' + err);
+                }
+                
+            }
+
+        }));
+    </script>
+} 

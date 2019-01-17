@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--- for normal screens -->
+<resources>
+	<dimen name="text_size_large"> 35sp </dimen>
+	<dimen name="text_size_medium"> 25sp </dimen>
+	<dimen name="text_size_small"> 17sp </dimen>
+</resources>

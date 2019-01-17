@@ -1,0 +1,80 @@
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="editProfileForm" class="form-horizontal">
+    
+</form>
+
+<script id="profileTemplate" type="text/html">
+    <input type="hidden" name="UserId" value="{{UserId}}" />
+
+    <fieldset>
+        <legend>Edit Profile</legend>
+
+        <div class="alert display-none"></div>
+
+        <div class="control-group">
+            <label class="control-label">Email</label>
+            <div class="controls">
+                <input type="text" name="Email" placeholder="Email address" value="{{Email}}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Password</label>
+            <div class="controls">
+                <input type="password" name="Password" placeholder="Password">
+                    
+                <input type="password" name="ConfirmPassword" placeholder="Confirm Password">
+                <span class="help-block">Leave blank to keep current password.</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </fieldset>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var userForm = $('#editProfileForm');
+
+            // Show overlay
+            $(userForm).form('overlay');
+
+            // Setup user subscriptions
+            var user = new User();
+
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                var html = Bitsie.Shop.Template('#profileTemplate', resp);
+                userForm.html(html);
+                $(userForm).form('overlay-hide');
+            });
+            
+            user.subscribe(user.MESSAGE_UPDATEPROFILE, function (resp) {
+                var message = $('.alert', userForm);
+                userForm.form('enable');
+                if (resp.Success) {
+                    message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Profile has been saved.').fadeIn();
+                } else {
+                    message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                }
+            });
+
+            user.getOne();
+            
+            $(userForm).submit(function (e) {
+                e.preventDefault();
+                userForm.form('disable');
+                var formData = $(userForm).serializeObject();
+                user.update(formData);
+            });
+        }));
+    </script>
+} 

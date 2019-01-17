@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Freshbooks";
+}
+
+<div class="contentWrapper page">
+    
+    <div class="container whitebg">
+    
+        <h2>Connect to Freshbooks</h2>
+
+        <p>Connecting to your Freshbooks account in order to accept bitcoin payments is easy! Simply 
+            fill in the URL you use to connect to Freshbooks and press "Connect".
+        </p>
+
+        <form action="/OAuth" method="post" >
+            
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-addon">http://</span>
+                      <input type="text" name="Url" class="form-control freshbooks-domain" placeholder="acme" required="required" />
+                      <span class="input-group-addon">.freshbooks.com</span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <button class="btn btn-success btn-lg">Connect</button>
+                </div>
+
+            </div>
+        </form>
+
+        <p><strong>Don't know what your Freshbooks URL is?</strong></p>
+
+        <ol>
+            <li>Log into your FreshBooks account.</li>
+            <li>Click on the "Settings" link at the top right hand corner of the page.</li>
+            <li>Scroll down to the bottom of this page to a section labeled "Account URL".</li>
+        </ol>
+</div>
+
+<div style="margin-bottom:168px"></div>

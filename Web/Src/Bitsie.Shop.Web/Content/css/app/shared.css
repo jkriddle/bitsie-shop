@@ -1,0 +1,117 @@
+﻿/*****************************
+ Utility Styles
+ *****************************/
+/* Remove bootstrap URL links */
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+}
+.align-left,
+td.align-left {
+  text-align: left;
+}
+.align-center,
+td.align-center {
+  text-align: center;
+}
+.align-right,
+td.align-right {
+  text-align: right;
+}
+.full {
+  width: 100%;
+}
+.display-none {
+  display: none;
+}
+.error,
+.required {
+  color: #dc0c0c;
+}
+.print {
+  display: none !important;
+}
+@media print {
+  .print {
+    display: block !important;
+  }
+  .noprint,
+  .noprint * {
+    display: none !important;
+  }
+}
+/*****************************
+ Forms
+ *****************************/
+form {
+  /* Allow overlays to display properly */
+
+  position: relative;
+}
+/* Allow inline elements within horizontal form */
+.form-horizontal input.inline,
+.form-horizontal input[type="password"].inline {
+  width: 39%;
+}
+/* Fix uneditable textarea */
+textarea.uneditable-input {
+  height: auto;
+}
+/* Pull an icon to display inside the input */
+.icon-inline {
+  margin: 3px 0 0 -25px;
+}
+.control-text {
+  line-height: 2.2em;
+}
+/*****************************
+ Overlay
+ *****************************/
+.overlay-container {
+  display: table-cell;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 1050;
+  vertical-align: middle;
+}
+.overlay {
+  background-color: #fff;
+  height: 100%;
+  font-size: 1.4em;
+  left: 0;
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+  position: absolute;
+  text-align: center;
+  top: 0;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 10;
+  display: table-cell;
+}
+.overlay-container span {
+  display: block;
+  font-weight: bold;
+  position: relative;
+  top: 50%;
+  margin-top: -10px;
+  z-index: 20;
+}
+/*****************************
+ Bootstrap Overrides
+ *****************************/
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  background-color: #F59433;
+}
+/* Table column overflow for long content (i.e. log messages) */
+.td-break {
+  word-break: break-all;
+  max-width: 300px;
+}

@@ -1,0 +1,152 @@
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Account Settlement";
+}
+
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>ACOUNT <span>SETTLEMENT</span></h1>
+        </div>
+    
+    <form id="settlementForm" action="#" method="post" class="col-xs-12">
+        <div class="col-xs-12">             
+            <div class="alert display-none"></div>
+            <div class="col-xs-12">
+                <div class="widget-content nopadding">
+                </div>
+                
+            </div>
+            
+
+        </div>	
+    </form>
+</div>
+</div>
+<script id="settlementTemplate" type="text/html">
+
+    <div class="col-xs-12 col-sm-6 col-md-3">
+        <a href="/Manage/Integrations?type=Wallet32" class="integrations integrations-wallet32 {{#is PaymentMethod 6}}enabled{{/is}}">
+            <img class="col-xs-12" src="/Content/img/wallet32_logo.png" />
+            <div class="col-xs-12">
+                Wallet32
+            </div>            
+            <div class="col-xs-12 integrations-status">
+                {{#is PaymentMethod 6}}
+                    Enabled
+                {{/is}}
+            </div>
+            <div class="clearfix"></div>
+        </a>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-3">
+        <a href="/Manage/Integrations?type=Trezor" class="integrations integrations-trezor {{#is PaymentMethod 5}}enabled{{/is}}">
+            <img class="col-xs-12" src="/Content/img/trezor_logo.png" />
+            <div class="col-xs-12">
+                Trezor
+            </div>    
+            <div class="col-xs-12 integrations-status">
+                {{#is PaymentMethod 5}}
+                    Enabled
+                {{/is}}
+            </div>
+            <div class="clearfix"></div>
+        </a>
+    </div>
+
+    
+    <div class="col-xs-12 col-sm-6 col-md-3">
+        <a href="/Manage/Integrations?type=bitpay" class="integrations integrations-bitpay {{#is PaymentMethod 1}}enabled{{/is}}">
+            <img class="col-xs-12" src="/Content/img/settlement-bitpay.png" />
+            <div class="col-xs-12">
+                Bitpay
+            </div>
+            <div class="integrations-status">
+                {{#is PaymentMethod 1}}
+                    Enabled
+                {{/is}}
+            </div>
+            <div class="clearfix"></div>
+        </a>
+    </div>
+    
+    <div class="col-xs-12 col-sm-6 col-md-3">
+        <a href="/Manage/Integrations?type=gocoin" class="integrations integrations-gocoin {{#is PaymentMethod 4}}enabled{{/is}}">
+            <img class="col-xs-12" src="/Content/img/settlement-gocoin.png" />
+            <div class="col-xs-12">
+                GoCoin
+            </div>            
+            <div class="integrations-status">
+                {{#is PaymentMethod 4}}
+                    Enabled
+                {{/is}}
+            </div>
+            <div class="clearfix"></div>
+        </a>
+    </div>
+
+    <div class="clearfix"></div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var id = Bitsie.Shop.QueryString.id;
+            var settlementForm = $('#settlementForm');
+            var message = $('.alert', settlementForm);
+            var user = new User();
+            var userData = null;
+            
+            $(".widget-content").on("click", "a", function (e) {
+                e.preventDefault();
+                var link = $(this).attr("href");
+                if ($('.integrations.enabled').length > 0) {
+                    bootbox.dialog({
+                        message: "<strong>Notice: </strong> Changing your settlement method will remove your existing settlement information permanently. Would you like to continue?",
+                        title: "Change Settlement",
+                        buttons: {
+                            cancel: {
+                                label: "No",
+                                className: "btn-warning",
+                                callback: function () {
+
+                                }
+                            },
+                            success: {
+                                label: "Yes",
+                                className: "btn-success",
+                                callback: function () {
+                                    document.location.href = link;
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    document.location.href = link;
+                }
+            });
+            // Show overlay
+            $('.widget-content', settlementForm).form('overlay');
+            
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#settlementTemplate', userData);
+                $('.widget-content', settlementForm).html(html);
+                $('.widget-content', settlementForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getOne(id);
+
+            function reload() {
+                user.getOne(id);
+            }
+
+           
+        }));
+    </script>
+} 

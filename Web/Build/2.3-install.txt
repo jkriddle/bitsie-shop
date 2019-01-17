@@ -1,0 +1,4 @@
+* Enable 32-bit applications in application pools for shop.bitsie.com and api.shop.bitsie.com
+* Run SQL:
+  - 2.3-hdwallets.sql (must be run first)
+  - bip39-wallet.sql

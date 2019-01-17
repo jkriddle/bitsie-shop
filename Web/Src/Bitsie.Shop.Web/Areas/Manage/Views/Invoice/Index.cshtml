@@ -1,0 +1,148 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+    <div class="page-header">
+        <h1>INVOICES <span></span></h1>
+        <div class="page-header-actions">
+            <a  href="/Manage/Invoice/Create" role="button" data-toggle="modal" class="btn btn-success btn-lg "><i class="fa fa-plus"></i> New Invoice </a>
+        </div>
+    </div>
+             
+    <div class="alert display-none"></div>
+
+    <div class="widget-box">
+        <div class="widget-title">
+            <div class="table-length">
+                <label>Show 
+                    <select size="1">
+                        <option value="10" selected="selected">10</option>
+                        <option value="25">25</option><option value="50">50</option>
+                        <option value="100">100</option>
+                    </select> 
+                    entries</label>
+            </div>
+        </div>
+
+        <div class="widget-content nopadding">
+            <div id="invoiceTable" class="table-wrapper table-datatable" role="grid">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-xs-3"><a href="#FirstName">First Name</a></th>
+                            <th class="col-xs-3"><a href="#LastName">Last Name</a></th>
+                            <th class="col-xs-1"><a href="#InvoiceAmount">Amount</a></th>
+                            <th class="col-xs-2"><a href="#OrderDate">Date</a></th>
+                            <th class="col-xs-1"><a href="#Status">Status</a></th>
+                            <th class="col-xs-1"><a href="#Action"></a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7"><img src="@Url.Content("~/Content/img/spinner.gif")" /> Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>  
+
+                <div class="ui-toolbar ui-widget-header">
+                    <div class="table-filter input-append col-xs-6">
+                        <input class="searchTerm form-control col-xs-4 pull-left" type="text">
+                        <button type="submit" class="btn col-xs-2 pull-left">Search</button> 
+                        <a type="button" class="advanced btn col-xs-2 pull-left" href="#">Advanced</a>
+                    </div>
+                    <div class="table-pager"></div>
+                </div>
+            </div>
+        </div>
+    </div>	
+</div>
+    </div>
+<script id="searchTemplate" type="text/html">
+    <h4>Advanced Search</h4>
+    <form class="form-horizontal form-modal">
+        <div class="form-group">
+            <label class="col-md-4">Invoice Date</label>
+            <div class="col-md-7">
+                <input class="form-control date-range" name="InvoiceDateRange" type="text" value="{{OrderDateRange}}" />
+                <input type="hidden" name="StartDate" value="{{StartDate}}" />
+                <input type="hidden" name="EndDate" value="{{EndDate}}" />
+                <i class="icon-inline icon-calendar"></i>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-4">Customer Last Name</label>
+            <div class="col-md-7">
+                <input class="form-control" name="CustomerLastName" type="text" value="{{CustomerLastName}}" />
+            </div>
+        </div>
+    </form>
+</script>
+
+<script id="invoiceRowTemplate" type="text/html">
+    {{#Invoices}}
+    <tr class="order-row-{{OrderId}}">
+        <td>{{CustomerFirstName}}</td>
+        <td>{{CustomerLastName}}</td>
+        <td>${{toCurrency USDAmount}}</td>
+        <td>{{toDateTime OrderDate}}</td>        
+        <td class="align-right">
+            {{#is Status 0}}
+            <a class="label label-default" title="Invoice has been sent but no payments have been made.">Pending</a>
+            {{/is}}
+            {{#is Status 2}}
+            <a class="label label-warning" title="Invoice has been partially paid and is waiting for remaining balance.">Partial</a>
+            {{/is}}
+            {{#is Status 3}}
+            <a class="label label-success" title="Invoice has been completely paid.">Paid</a>
+            {{/is}}
+            {{#is Status 4}}
+            <a class="label label-danger" title="Invoice has not been paid and has expired.">Expired</a>
+            {{/is}}
+        </td>
+        <td class="align-right">
+            {{#compare Status 3 operator="!="}}
+            <a class="btn btn-default" href="@Url.Action("Edit", "Invoice")?id={{InvoiceGuid}}" title="View order"><i class="fa fa-edit" /></a>
+            {{/compare}}
+            <a class="btn btn-default" href="@Url.Action("Details", "Invoice")?id={{InvoiceGuid}}" title="View order"><i class="fa fa-search" /></a>
+        </td>
+    </tr>  
+    {{/Invoices}}
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var invoiceFilter = new SearchFilter();
+            var invoice = new Invoice();
+            var invoiceTable = $('#invoiceTable');
+
+            // INvoice list rendering
+            invoice.subscribe(invoice.INVOICE_LIST, function (resp) {
+                if (resp.Invoices.length > 0) {
+                    var html = Bitsie.Shop.Template('#invoiceRowTemplate', resp);
+                    $('tbody', invoiceTable).html(html);
+                    dataTable.update(resp.CurrentPage, resp.NumPages);
+                } else {
+                    dataTable.empty('No invoices found.');
+                }
+            });
+
+            // Init table
+            var dataTable = new DataTable(invoiceTable, invoiceFilter, invoice, function () {
+                $('.date-range').daterangepicker({
+                    ranges: Bitsie.Shop.Config.dateRanges
+                },
+                function (start, end) {
+                    $('.modal input[name="StartDate"]').val(start.format("YYYY-MM-DD"));
+                    $('.modal input[name="EndDate"]').val(end.format("YYYY-MM-DD"));
+                });
+            });
+           
+        }));
+    </script>
+} 
+

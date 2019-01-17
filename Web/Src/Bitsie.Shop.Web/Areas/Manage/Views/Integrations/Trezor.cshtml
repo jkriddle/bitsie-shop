@@ -1,0 +1,142 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Account Settlement > Trezor";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>SETTLEMENT <span>TREZOR</span></h1>
+        </div>
+        <form id="settlementForm" action="#" method="post" class="col-xs-12">
+            <div class="alert display-none"></div>
+            <div class="widget-content col-xs-12"></div>
+        </form>
+    </div>
+</div>
+
+
+  @Html.Partial("_bip44_wizard");
+
+@section scripts {
+
+
+    <script type="text/javascript">
+        ($(function () {
+
+            var id = Bitsie.Shop.QueryString.id;
+            var settlementForm = $('#settlementForm');
+            var message = $('.alert', settlementForm);
+            var user = new User();
+            var userData = null;
+            var formWizard = $("#formWizard");
+            var walletData = null;
+            var wallet = new Wallet();
+            var walletType = "Trezor";
+
+
+            $("#formWizard").wizard();
+            $(".widget-content").on("click", ".useExistingStep", function (e) {
+                e.preventDefault();
+                if ($(this).hasClass('show-warning')) {
+                    bootbox.dialog({
+                        message: "<strong>Notice: </strong> Entering a new key will remove your current wallet information from the system. Would you like to use a different wallet key?",
+                        title: "Custom title",
+                        buttons: {
+                            cancel: {
+                                label: "No",
+                                className: "btn-warning",
+                                callback: function () {
+                                }
+                            },
+                            success: {
+                                label: "Yes",
+                                className: "btn-success",
+                                callback: function () {
+                                    $("#formWizard").wizard('selectedItem', { step: 3 });
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $("#formWizard").wizard('selectedItem', { step: 2 });
+                }
+            });
+
+            $(".widget-content").on("click", ".showPublicKey", function (e) {
+                e.preventDefault();
+                var key = $("#publicMasterKey").val();
+                var input = '<input type="text" class="form-control col-xs-12" value="' + key + '" ><br/><br/>';
+                bootbox.dialog({
+                    message: input,
+                    title: "Public Master Key",
+                    buttons: {
+                        success: {
+                            label: "Okay, got it",
+                            className: "btn-success",
+                            callback: function () { }
+                        }
+                    }
+                });
+            });
+            
+
+            // Show overlay
+            $('.widget-content', settlementForm).form('overlay');
+
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {                
+                userData = resp;
+                userData.walletType = walletType;
+                var html = Bitsie.Shop.Template('#settlementTemplate', userData);
+                $('.widget-content', settlementForm).html(html);
+                $('.widget-content', settlementForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getOne(id);
+
+            function reload() {
+                user.getOne(id);
+            }
+
+            settlementForm.submit(function (e) {
+                e.preventDefault();
+                settlementForm.form('disable');
+                var formData = settlementForm.serializeObject()
+                Bitsie.Shop.Api.post('/api/integrations/bip44', formData, function (resp) {
+                    if (resp.Success) {
+                        message.hide().removeClass('alert-danger')
+                        .addClass('alert-success').html('Public master key has been saved. <a href="/manage/user/settlement">Return to Settlement</a>').fadeIn();
+                    } else {
+                        message.hide().removeClass('alert-success')
+                        .addClass('alert-danger').html(resp.Errors.join('<br />')).fadeIn();
+                    }
+                    Bitsie.Shop.scrollTo(0);
+                    settlementForm.form('enable');
+                });
+            });
+
+
+            $(".widget-content").on("click", "#save-existing-wallet-btn", function (e) {
+                e.preventDefault();
+                var param = new Object();
+                param.MasterPublicKey = $("#existing-key").val();
+                param.EncryptedPrivateKey = null;
+                window.walletData = param;
+                console.log(walletType);
+                wallet.saveExisting($("#existing-key").val(), walletType, function (resp) {                    
+                    if (resp.Success == true) {
+                        $(".currentPublicKey em").html(window.walletData.MasterPublicKey);
+                        $(".use-existing-alert").toggleClass("alert-danger", false).toggleClass("alert-success", true).html("Public Master Key Saved").show();
+                        window.location.reload();
+                    } else {
+                        $(".use-existing-alert").toggleClass("alert-danger", true).toggleClass("alert-success", false).html("Error: " + resp.Errors[0]).show();
+                    }
+                });
+
+            });
+
+        }));
+    </script>
+} 

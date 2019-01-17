@@ -1,0 +1,51 @@
+@{
+   
+    ViewBag.Title = "Home";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+            <h1>Welcome to Bitsie Shop!</h1>
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="glyphicon glyphicon-align-justify"></i>								
+                </span>
+                <h5>My Stats</h5>
+            </div>
+            <div id="dashboard-report" class="widget-content">
+                Loading report...
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="dashboardTemplate" type="text/html">
+    <div class="col-xs-12">
+		<ul class="site-stats">
+            {{#is PaymentMethod 1}}
+			    <li><div class="cc">$<strong>{{toCurrency RevenueTodayUsd}}</strong> <small>Today</small></div></li>
+			    <li><div class="cc">$<strong>{{toCurrency RevenueThisMonthUsd}}</strong> <small>This Month</small></div></li>
+			    <li><div class="cc">$<strong>{{toCurrency RevenueAllTimeUsd}}</strong> <small>All Time</small></div></li>
+			    <li><div class="cc">$<strong>{{toCurrency RevenuePendingPayoutUsd}}</strong> <small>Pending Payout</small></div></li>
+            {{else}}
+			    <li><div class="cc"><strong>{{toFixed RevenueTodayBtc 8}} BTC</strong> <small>Today</small></div></li>
+			    <li><div class="cc"><strong>{{toFixed RevenueThisMonthBtc 8}} BTC</strong> <small>This Month</small></div></li>
+			    <li><div class="cc"><strong>{{toFixed RevenueAllTimeBtc 8}} BTC</strong> <small>All Time</small></div></li>
+			    <li><div class="cc"><strong>{{toFixed RevenuePendingPayoutBtc 8}} BTC</strong> <small>Pending Payout</small></div></li>
+            {{/is}}
+		</ul>
+	</div>
+    <div class="clearfix"></div>
+</script>
+
+@section scripts {
+    <script>
+        $(function () {
+            Bitsie.Shop.Api.get('/api/report/dashboard', null, function (wallet) {
+                var html = Bitsie.Shop.Template('#dashboardTemplate', wallet);
+                $('#dashboard-report').html(html);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,172 @@
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Order Details";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Orders <span>Details</span></h1>
+        </div>
+
+        <form id="viewOrderForm" action="#" method="post" class="row-fluid">
+            <div class="span12">
+             
+                <div class="alert display-none"></div>
+
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="glyphicon glyphicon-align-justify"></i>									
+                        </span>
+                        <h5>View Order</h5>
+                    </div>
+                    <div class="widget-content padding"></div>
+                </div>
+
+            </div>	
+        </form>
+    </div>
+</div>
+
+<script id="orderDetailsTemplate" type="text/html">
+    <div class="form-horizontal">
+                        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Order ID</label>
+            <div class="col-md-7">
+                <span class="form-value">{{Order.OrderId}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Order Number</label>
+            <div class="col-md-7">
+                <span class="form-value">{{Order.OrderNumber}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Order Date</label>
+            <div class="col-md-7">
+                <span class="form-value">{{toDateTime Order.OrderDate}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Order Type</label>
+            <div class="col-md-7">
+                <span class="form-value">{{Order.OrderType}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Reference/Description</label>
+            <div class="col-md-7">
+                <span class="form-value">{{Order.Description}}</span>
+            </div>
+        </div>
+        
+        {{#if Order.ProductId}}
+            <div class="form-group">
+                <label class="col-md-2 control-label">Product</label>
+                <div class="col-md-7">
+                    <span class="form-value"><a href="/Manage/Product/Edit?id={{Order.ProductId}}">{{Order.ProductTitle}}</a></span>
+                </div>
+            </div>
+        {{/if}}
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Payment Address</label>
+            <div class="col-md-7">
+                <span class="form-value"><a href="https://blockchain.info/address/{{Order.PaymentAddress}}" target="_blank">{{Order.PaymentAddress}}</a></span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Subtotal</label>
+            <div class="col-md-7">
+                <span class="form-value">${{toCurrency Order.Subtotal}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Gratuity</label>
+            <div class="col-md-7">
+                <span class="form-value">${{toCurrency Order.Gratuity}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Total USD</label>
+            <div class="col-md-7">
+                <span class="form-value">${{toCurrency Order.Total}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Total BTC</label>
+            <div class="col-md-7">
+                <span class="form-value">{{toFixed Order.BtcTotal 8}}</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label">Status</label>
+            <div class="col-md-7">
+                <span class="form-value">
+                    {{#is Order.Status 2}}
+                        <a class="label label-warning" title="Order has been partially paid and is waiting for remaining balance.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+            
+                    {{#is Order.Status 3}}
+                        <a class="label label-success" title="Order has been paid and is awaiting confirmation on the network.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+            
+                    {{#is Order.Status 4}}
+                        <a class="label label-info" title="Order has been paid and payment has been sent to you.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+            
+                    {{#is Order.Status 5}}
+                        <a class="label label-warning" title="Order has expired.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+            
+                    {{#is Order.Status 6}}
+                        <a class="label label-danger" title="Payment has been refunded.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+            
+                    {{#is Order.Status 7}}
+                        <a class="label label-success" title="Payment has been confirmed by the network and payout will be sent shortly.">{{Order.StatusDescription}}</a>
+                    {{/is}}
+                
+                </span>
+            </div>
+        </div>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var orderForm = $('#viewOrderForm');
+            var message = $('.alert', orderForm);
+            var order = new Order();
+            
+            // Show overlay
+            $('.widget-content', orderForm).form('overlay');
+            
+            order.subscribe(order.ORDER_RETRIEVED, function (resp) {
+                var html = Bitsie.Shop.Template('#orderDetailsTemplate', resp);
+                $('.widget-content', orderForm).html(html);
+                $('.widget-content', orderForm).form('overlay-hide');
+            });
+
+            // Load order
+            order.getOne(id);
+
+        }));
+    </script>
+} 

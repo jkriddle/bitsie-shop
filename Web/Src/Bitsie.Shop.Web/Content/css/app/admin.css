@@ -1,0 +1,99 @@
+/*****************************
+ Utility Styles
+ *****************************/
+.align-left,
+td.align-left {
+  text-align: left;
+}
+.align-center,
+td.align-center {
+  text-align: center;
+}
+.align-right,
+td.align-right {
+  text-align: right;
+}
+.display-none {
+  display: none;
+}
+
+/*****************************
+ Forms
+ *****************************/
+form {
+  /* Allow overlays to display properly */
+
+  position: relative;
+}
+/* Allow inline elements within horizontal form */
+.form-horizontal input.inline,
+.form-horizontal input[type="password"].inline {
+  width: 39%;
+}
+/* Fix uneditable textarea */
+textarea.uneditable-input {
+  height: auto;
+}
+/* Pull an icon to display inside the input */
+.icon-inline {
+  margin: 3px 0 0 -25px;
+}
+/*****************************
+ Overlay
+ *****************************/
+.overlay-container {
+  display: table-cell;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 1050;
+  vertical-align: middle;
+}
+.overlay {
+  background-color: #fff;
+  height: 100%;
+  font-size: 1.4em;
+  left: 0;
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+  position: absolute;
+  text-align: center;
+  top: 0;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 10;
+  display: table-cell;
+}
+.overlay-container span {
+  display: block;
+  font-weight: bold;
+  position: relative;
+  top: 50%;
+  margin-top: -10px;
+  z-index: 20;
+}
+/*****************************
+ Forms
+ *****************************/
+/** Allow form values that are not placed in an input control
+	to align properly with labels */
+.form-value {
+  display: block;
+  float: left;
+  min-height: 25px;
+  padding-top: 5px;
+  margin-bottom: 12px;
+}
+.form-horizontal.form-modal .control-label {
+  width: 120px;
+}
+.form-horizontal.form-modal .controls {
+  margin-left: 140px;
+}
+.advanced {
+  display: inline-block;
+  margin: 7px 0 0 4px;
+}

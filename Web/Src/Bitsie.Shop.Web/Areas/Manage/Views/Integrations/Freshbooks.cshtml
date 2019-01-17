@@ -1,0 +1,97 @@
+﻿@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Integrations > Freshbooks";
+}
+
+
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+    <div class="page-header">
+        <h1>ACCOUNT <span>FRESHBOOKS INTEGRATION</span></h1>
+    </div>
+    <form id="freshbooksForm" action="/OAuth/Freshbooks" method="post" class="row-fluid">
+        
+             
+    <div class="alert display-none"></div>
+
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="glyphicon glyphicon-align-justify"></i>									
+            </span>
+            <h5>Connect Freshbooks</h5>
+        </div>
+        <div class="widget-content padding">
+        </div>
+    </div>
+    </form>
+</div>
+
+<script id="settlementTemplate" type="text/html">
+    
+    {{#EnableFreshbooks}}
+        <p>Your Freshbooks account is connected. <a href="#" class="disable">Disable</a></p>
+    {{else}}
+        <p>Fill in the URL you use to connect to Freshbooks and press "Connect". <a target="_blank" href="http://community.freshbooks.com/support/how-do-i-log-in-to-freshbooks/">Need help?</a></p>
+
+        <div class="col-xs-5">
+            <div class="input-group input-group">
+                <span class="input-group-addon">http://</span>
+                <input type="text" name="Url" class="form-control freshbooks-domain" placeholder="acme" required="required" />
+                <span class="input-group-addon">.freshbooks.com</span>
+            </div>
+        </div>
+
+        <div class="col-xs-5">
+            <button class="btn btn-success btn">Connect</button>
+        </div>
+
+        <div class="clearfix"></div>
+    
+    {{/EnableFreshbooks}}
+
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            var id = Bitsie.Shop.QueryString.id;
+            var freshbooksForm = $('#freshbooksForm');
+            var message = $('.alert', freshbooksForm);
+            var user = new User();
+            var userData = null;
+
+            // Show overlay
+            $('.widget-content', freshbooksForm).form('overlay');
+
+            user.subscribe(user.MESSAGE_RETRIEVED, function (resp) {
+                userData = resp;
+                var html = Bitsie.Shop.Template('#settlementTemplate', userData);
+                $('.widget-content', freshbooksForm).html(html);
+                $('.widget-content', freshbooksForm).form('overlay-hide');
+            });
+
+            // Load user
+            user.getOne(id);
+
+            if (Bitsie.Shop.QueryString.connected == "True") {
+                $('.alert').addClass("alert-success").removeClass("alert-danger").html("Your account has been connected successfully.").show();
+            }
+
+            freshbooksForm.on('click', '.disable', function (e) {
+                e.preventDefault();
+                $('.widget-content', freshbooksForm).form('overlay');
+                Bitsie.Shop.Api.post('/Api/Integrations/DisableFreshbooks', null, function (resp) {
+                    user.getOne(id);
+                });
+            });
+
+            function reload() {
+                user.getOne(id);
+            }
+
+        }));
+    </script>
+} 

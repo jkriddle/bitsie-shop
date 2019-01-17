@@ -1,0 +1,66 @@
+@*  This partial contains all lists used by Handlebars templates. Place these here
+    to avoid having to update multiple locations since this data is not sent down 
+    from the API, and we can't use the .NET MVC to output these lists (since the
+    value isn't available until the Handelbars template renders *@
+
+<script data-name="roleList" class="hb-partial" type="text/html">
+    <select name="Role">
+        <option value="">All roles</option>
+        <option {{#equals Role "Merchant"}}selected="selected"{{/equals}} 
+                   value="Member">Merchant</option>
+        <option {{#equals Role "Administrator"}}selected="selected"{{/equals}} 
+                   value="Administrator">Administrator</option>
+        <option {{#equals Role "Tipsie"}}selected="selected"{{/equals}} 
+                   value="Tipsie">Tipsie</option>
+    </select>
+</script>
+
+<script data-name="logLevelList" class="hb-partial" type="text/html">
+    <select name="LogLevel">
+        <option value="">All levels</option>
+        <option {{#equals LogLevel "Debug"}}selected="selected"{{/equals}} 
+                    value="Debug">Debug</option>
+        <option {{#equals LogLevel "Info"}}selected="selected"{{/equals}} 
+                    value="Info">Info</option>
+        <option {{#equals LogLevel "Warning"}}selected="selected"{{/equals}} 
+                    value="Warning">Warning</option>
+        <option {{#equals LogLevel "Error"}}selected="selected"{{/equals}} 
+                    value="Error">Error</option>
+    </select>
+</script>
+
+<script data-name="logCategoryList" class="hb-partial" type="text/html">
+    <select name="LogCategory">
+        <option value="">All categories</option>
+        <option {{#equals LogCategory "Application"}}selected="selected"{{/equals}} 
+                    value="Application">Application</option>
+        <option {{#equals LogCategory "Security"}}selected="selected"{{/equals}} 
+                    value="Security">Security</option>
+        <option {{#equals LogCategory "System"}}selected="selected"{{/equals}} 
+                    value="System">System</option>
+    </select>
+</script>
+
+<script data-name="resourceCateegoryList" class="hb-partial" type="text/html">
+    <select name="ResourceCategory">
+        <option value="">All Categories</option>
+        <option {{#equals ResourceCategory "Content"}}selected="selected"{{/equals}} 
+                    value="Content">Content</option>
+        <option {{#equals ResourceCategory "Settings"}}selected="selected"{{/equals}} 
+                    value="Settings">Settings</option>
+    </select>
+</script>
+
+
+<script id="alertsTemplate" type="text/html">
+    <p>Your account setup is almost done! You need to complete the following steps in order to start accepting bitcoin payments:</p>
+    
+    <ul>
+        {{#Alerts}}
+            {{#equals Code "1000"}}
+            <li><i class="fa fa-institution" /> <a href="/Manage/User/Settlement">Select a settlement method</a></li>
+            {{/equals}}
+        {{/Alerts}}
+    </ul>
+
+</script>

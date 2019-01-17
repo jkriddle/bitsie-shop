@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="amount">enter amount (usd)</string>
+	<string name="gratuityAmount">gratuity amount</string>
+	<string name="app_name">Bitsie Shop</string>
+	<string name="noProvider">You must select a payment provider or wallet in order to use a mobile device with Bitsie Shop. Please sign in to your account from http://shop.bitsie.com and provide your wallet or payment provider settings under the Profile section.</string>
+</resources>

@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Freshbooks";
+}
+
+<div class="contentWrapper page page-help">
+    
+    <div class="container whitebg">
+    
+        <h2>Freshbooks</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Accept bitcoin payments for Freshbooks invoices.</h4>
+
+                <p>Bitsie Shop now allows you to connect your Freshbooks account, and allow customers to 
+                    pay their invoices through Bitsie Shop. 
+                </p>
+
+                <p>After <a href="#connect">connecting your account</a>, your Hosted Checkout page will allow your customers to enter their last 
+                    name and the invoice number in order to retrieve their balance and make a bitcoin payment. Upon receiving a bitcoin payment, Bitsie Shop will 
+                    update your Freshbooks invoice to show it as being "paid".
+                </p>
+            </div>
+            <div class="col-md-6">
+                <img class="full" src="@Url.Content("~/Content/img/pages/freshbooks-5.png")" />
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3 id="connect">Get Started</h3>
+                
+                <p>To get started, log in to your Freshbooks account. Then click on the "My Account" link in the upper right corner.</p>
+
+            </div>
+            <div class="col-md-6">
+                <img class="full" src="@Url.Content("~/Content/img/pages/freshbooks-1.png")" />
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <p>Next click on the "Freshbooks API" link in the submenu.</p>
+            </div>
+            <div class="col-md-6">
+                <img class="full" src="@Url.Content("~/Content/img/pages/freshbooks-2.png")" />
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <p>You will see two fields at the top of the page. You are going to be copy/pasting these into your Bitsie Shop profile settings.</p>
+            </div>
+            <div class="col-md-6">
+                <img class="full" src="@Url.Content("~/Content/img/pages/freshbooks-3.png")" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p>From the Bitsie Shop dashboard, click on "Profile" in the left sidebar, and click on the "Hosted Checkout" tab. 
+                    For "Enable Freshbooks" click the radio button next to "Yes", and paste the two values from the step above into the respective fields.</p>
+            
+                <p><strong>That's it!</strong>.If you go to your hosted checkout page, you will notice two new fields that allow customers to retrieve their invoice information using their last name and their invoice number.</p>
+
+            </div>
+            <div class="col-md-6">
+                <img class="full" src="@Url.Content("~/Content/img/pages/freshbooks-4.png")" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div style="margin-bottom:168px"></div>

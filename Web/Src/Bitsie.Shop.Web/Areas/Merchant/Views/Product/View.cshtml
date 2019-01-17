@@ -1,0 +1,46 @@
+@model Bitsie.Shop.Web.Models.ProductViewModel
+@{
+    ViewBag.Title = "Not Available";
+}
+
+<div class="page @if (Model.IsMobile){<text>mobile-merchant col-sm-12</text>}">
+    <div class="container-full background-white merchant-header">
+        <h1 class="text-center">@Model.Product.Title</h1>
+    </div>
+    <div class="product-content">
+        <p>@Html.Raw(Model.Product.Description)</p>
+            <div class="clearfix"></div>
+            <button id="purchase" class="btn btn-large btn-success">Purchase</button>
+    </div>
+        <div class="checkout-total">
+            <h4>price</h4>
+            <h3 class="total-usd">$@Model.Product.Price.ToString("N2")</h3>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var id = '@Model.Product.Id';
+        var merchantId = '@Model.Merchant.MerchantId'
+        var order = new Order();
+
+        order.subscribe(order.ORDER_CREATED, function (resp) {
+            if (resp.Success) {
+                window.location = '/' + merchantId + '/checkout?orderNumber=' + resp.Order.OrderNumber;
+                return;
+            }
+            bootbox.alert(resp.Errors.join('<br />'));
+        });
+
+        $('#purchase').click(function(e) {
+            $('#checkout').form('disable');
+            var param = {};
+            param.MerchantId = merchantId;
+            param.OrderType = '@Bitsie.Shop.Domain.OrderType.HostedCheckout';
+            param.ProductId = '@Model.Product.Id';
+            order.create(param);
+        });
+    });
+</script>

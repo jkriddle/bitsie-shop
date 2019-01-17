@@ -1,0 +1,27 @@
+﻿@using Bitsie.Shop.Domain
+@model Bitsie.Shop.Web.Models.CheckoutViewModel
+<form id="checkout" class="form" action="#" method="post" role="form">
+
+    <div id="form-placeholder"></div>
+
+    @if (Model.Merchant.Status != UserStatus.Suspended)
+    {
+        if(Model.Invoice != null)
+        {
+            @Html.Partial("_InvoiceForm", Model)
+        }
+    
+        if(Model.Invoice == null)
+        {
+            @Html.Partial("_EntryForm", Model)
+        }
+   
+        <!-- If using Bitsie Shop Invoices, don't show freshbooks integration -->
+        if(Model.Invoice == null && Model.FreshbooksEnabled == true)
+        {
+           @Html.Partial("_FreshbooksForm", Model)
+        }
+    } else {
+        @Html.Partial("_Suspended")
+    }
+</form>

@@ -1,0 +1,14 @@
+﻿[
+	{
+		name : "Bitsie.Shop.Command",
+		command : "E:\\Apps\\shop.bitsie.com\\Command\\Bitsie.Shop.Command.exe",
+		directory : "E:\\Apps\\shop.bitsie.com\\Command\\",
+		args : ""
+	},
+	{
+		name : "Bitsie.Shop.Command.Staging",
+		command : "E:\\Apps\\staging.shop.bitsie.com\\Command\\Bitsie.Shop.Command.Staging.exe",
+		directory : "E:\\Apps\\staging.shop.bitsie.com\\Command\\",
+		args : ""
+	}
+]

@@ -1,0 +1,142 @@
+﻿@model Bitsie.Shop.Domain.User
+@{
+    ViewBag.Title = "Amount Entry";
+}
+<div id="amount-entry" class="panel container-full background-white">
+    <div class="screen-title">
+        <h4>enter amount</h4>
+    </div>
+    <div class="container-full">
+        <span class="amount-dollar-sign pull-left">$</span>
+        <input id="amount" class="pull-left"  value="" placeholder="0.00"/>    
+    </div>    
+    <button id="amount-submit" class="btn btn-success btn-full text-right">SUBMIT <i class="fa fa-chevron-right"></i></button>
+</div>
+
+<div id="gratuity-entry" class="panel display-none">
+    <div class="container-full background-white">
+        <div class="screen-title">
+            <h4>enter gratuity</h4>
+        </div>
+        <div class="gratuity-buttons container-full">
+            <a data-amount="0" class="btn btn-gratuity col-xs-3">0%</a>
+            <a data-amount=".10" class="btn btn-gratuity col-xs-3">10%</a>
+            <a data-amount=".15" class="btn btn-gratuity col-xs-3">15%</a>
+            <a data-amount=".20" class="btn btn-gratuity col-xs-3">20%</a>
+        </div>    
+        <div id="custom-gratuity-entry container-full">
+            <span class="amount-dollar-sign pull-left">$</span>
+            <input id="gratuity-amount" class="pull-left" type="number" value="" placeholder="0.00"/>    
+        </div>
+        <a id="gratuity-submit" class="btn btn-success btn-full text-right">SUBMIT <i class="fa fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="container-full no-margin total-with-gratuity">
+        <h3 id="total-amount">0.00</h3>
+    </div>
+</div>
+
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var gratuityEnabled = '@Model.Settings.EnableGratuity' == 'True',
+                subtotal = 0,
+                gratuity = 0,
+                merchantId = localStorage.getItem("merchantId");
+
+            if (!merchantId) {
+                window.location = "/Mobile/";
+                return;
+            }
+
+            // Setup navigation (enable back buttons on mobile)
+            $.address.value("entry");
+            $.address.change(function (event) {
+                $('.panel').hide();
+                var hash = event.value;
+                if (hash == '/gratuity') {
+                    $("#gratuity-entry").show();
+                } else {
+                    // amount entry
+                    $("#amount-entry").show();
+                }
+            });
+
+            // Helper methods
+            function validateAmount(el) {
+                var th = $(el);
+                var newVal = th.val().replace(/[^0-9\.]/g, '');
+                th.val(newVal);
+            }
+
+            function formatCurrency(t) {
+                t = parseFloat(t);
+                t = t.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return t;
+            }
+
+            function submitOrder() {
+                // send member id and amount.
+                var order = new Order();
+                order.subscribe(order.ORDER_CREATED, function (resp) {
+                    if (!resp.Success) {
+                        alert(resp.Errors.join('\n'));
+                    } else {
+                        window.location = '/@Model.MerchantId/checkout?orderNumber=' + resp.Order.OrderNumber + '&m=1';
+                    }
+                });
+                order.create({
+                    subtotal: subtotal,
+                    gratuity: gratuity,
+                    merchantId : merchantId
+                });
+            }
+
+            function calculateGratuity(gratAmount) {
+                var grat = eval(subtotal * gratAmount).toFixed(2);
+                $("#gratuity-amount").val(grat);
+                var total = parseFloat(subtotal) + parseFloat(grat);
+                $("#total-amount").html("$" + total.toFixed(2));
+            }
+
+            // UI Events
+            $("#amount-submit").click(function (e) {
+                subtotal = $("#amount").val();
+                $("#total-amount").html("$" + formatCurrency(subtotal));
+                if (gratuityEnabled) {
+                    $.address.value('gratuity');
+                } else {
+                    submitOrder();
+                }
+            });
+            
+            $('#amount').on('keyup', function (e) {
+                // Main screen amount entry
+                validateAmount(this);
+                subtotal = $(this).val();
+            });
+
+            $('#gratuity-amount').on('keyup', function (e) {
+                validateAmount(this);
+                gratuity = $(this).val();
+                var total = formatCurrency(parseFloat(subtotal) + parseFloat(gratuity));
+                $('#total-amount').html('$' + total);
+            });
+
+            $("#gratuity-submit").click(function (e) {
+                gratuity = parseFloat($("#gratuity-amount").val());
+                submitOrder();
+            });
+
+            $(".gratuity-buttons").on("click", "a", function(e) {
+                e.preventDefault();
+                var grat = $(this).data("amount");
+                calculateGratuity(grat);
+            });
+
+        }));
+
+    </script>
+}

@@ -1,0 +1,56 @@
+﻿<p>
+    You've upgraded your Bitsie Shop account to the {{Plan}} plan. 
+    Your receipt is enclosed below for your records. You can see your account limits under the Subscription tab of your 
+    <a href="https://shop.bitsie.com/manage/user/profile">profile settings</a>.
+</p>
+
+<table cellpadding="2">
+    <tr>
+	    <td>
+            <strong>Order Date</strong>
+	    </td>
+	    <td>
+            {{OrderDate}}
+        </td>
+	</tr>
+    <tr>
+	    <td>
+            <strong>Reference/Description</strong>
+	    </td>
+	    <td>
+            {{Description}}
+        </td>
+	</tr>
+    <tr>
+	    <td>
+            <strong>Total</strong>
+	    </td>
+	    <td>
+            {{Total:C}}
+        </td>
+	</tr>
+    <tr>
+	    <td>
+            <strong>BTC Amount</strong>
+	    </td>
+	    <td>
+            {{BtcTotal:N8}}
+        </td>
+	</tr>
+    <tr>
+	    <td>
+            <strong>Payment Address</strong>
+	    </td>
+	    <td>
+            {{PaymentAddress}}
+        </td>
+	</tr>
+    <tr>
+	    <td>
+            <strong>Status</strong>
+	    </td>
+	    <td>
+            {{StatusDescription}}
+        </td>
+	</tr>
+</table>

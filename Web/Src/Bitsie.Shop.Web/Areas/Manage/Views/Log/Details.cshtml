@@ -1,0 +1,121 @@
+@using Bitsie.Shop.Web.Helpers
+@{
+   
+    ViewBag.Title = "Manage Logs";
+}
+
+<div id="content-header">
+    <h1>Logs</h1>
+</div>
+
+<div class="container-fluid">
+    <form id="viewLogForm" action="#" method="post" class="row-fluid">
+        <div class="span12">
+             
+            <div class="alert display-none"></div>
+
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="glyphicon glyphicon-align-justify"></i>									
+                    </span>
+                    <h5>View Log</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    
+                </div>
+            </div>
+
+        </div>	
+    </form>
+</div>
+
+<script id="logDetailsTemplate" type="text/html">
+    <div class="form-horizontal">
+                        
+        <div class="control-group">
+            <label class="control-label">Log ID</label>
+            <div class="controls">
+                <span class="form-value">{{LogId}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Log Date</label>
+            <div class="controls">
+                <span class="form-value">{{LogDate}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Category</label>
+            <div class="controls">
+                <span class="form-value">{{Category}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Level</label>
+            <div class="controls">
+                <span class="form-value">{{Level}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">User</label>
+            <div class="controls">
+                <span class="form-value">
+                    {{#if UserId}}
+                        <a href="@Url.Action("Details", "User")?id={{UserId}}" class="view-user">
+                            {{UserEmail}}
+                        </a>
+                    {{/if}}
+                </span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Message</label>
+            <div class="controls">
+                <span class="form-value">{{Message}}</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Details</label>
+            <div class="controls">
+                <span class="form-value">
+                    {{#if Details}}
+                        <pre>{{Details}}</pre>
+                    {{/if}}
+                </span>
+            </div>
+        </div>
+
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+            
+            var id = Bitsie.Shop.QueryString.id;
+            var logForm = $('#viewLogForm');
+            var message = $('.alert', logForm);
+            var log = new Log();
+            
+            // Show overlay
+            $('.widget-content', logForm).form('overlay');
+            
+            log.subscribe(log.MESSAGE_RETRIEVED, function (resp) {
+                var html = Bitsie.Shop.Template('#logDetailsTemplate', resp);
+                $('.widget-content', logForm).html(html);
+                $('.widget-content', logForm).form('overlay-hide');
+            });
+
+            // Load log
+            log.getOne(id);
+
+        }));
+    </script>
+} 

@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Tipsie";
+    Layout = "~/Views/Shared/_Blank.cshtml";
+}
+
+<div id="tipsie-print" class="container">
+    <div class="col-xs-6 col-xs-offset-3">
+
+        <div id="tipsie-container"></div>
+
+    </div>
+</div>
+
+<script id="tipsieTemplate" type="text/html">
+    <div class="print-qrcode-wrapper">
+        <div class="print-bitcoin-qr-inner">
+            <div class="bitcoin-qrcode"></div>
+            <a id="public" class="bitcoin-link" href="bitcoin:{{address}}">
+                {{address}}
+            </a>
+        </div>
+        <img id="qr-code-paper" src="/Content/img/bitsie_card_front.jpg"/>
+    </div>
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+
+        var html = Bitsie.Shop.Template('#tipsieTemplate', {
+            address: Bitsie.Shop.QueryString.address
+        });
+        $('#tipsie-container').html(html);
+
+        $('.bitcoin-qrcode').qrcode({
+            text: Bitsie.Shop.QueryString.address,
+            width: 200,
+            height: 200
+        });
+
+    </script>
+}

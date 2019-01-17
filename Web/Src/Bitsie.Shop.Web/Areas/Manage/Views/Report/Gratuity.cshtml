@@ -1,0 +1,152 @@
+@{
+   
+    ViewBag.Title = "Gratuity Report";
+}
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <div class="page-header">
+            <h1>Reports <span>Gratuity</span></h1>
+        </div>
+        <div class="alert display-none"></div>
+
+        <div class="widget-box">
+            <div class="widget-title">
+							
+                <h5>Tipsie Payments</h5>
+                    
+                <div class="table-length">
+                    <label>Show 
+                        <select size="1">
+                            <option value="10" selected="selected">10</option>
+                            <option value="25">25</option><option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> 
+                        entries</label>
+                </div>
+            </div>
+
+            <div class="widget-content nopadding">
+                <div id="orderTable" class="table-wrapper table-datatable" role="grid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="col-xs-3"><a href="#OrderDate">Date</a></th>
+                                <th><a href="#FirstName">First Name</a></th>
+                                <th><a href="#LastName">Last Name</a></th>
+                                <th class="col-xs-2"><a href="#Gratuity">Amount</a></th>
+                                <th class="col-xs-2"><a href="#Status">Status</a></th>
+                                <th class="col-xs-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7"><img src="@Url.Content("~/Content/img/spinner.gif")" /> Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>  
+
+                    <div class="ui-toolbar ui-widget-header">
+                        <div class="table-filter input-append col-xs-6">
+                            <input class="searchTerm form-control col-xs-4 pull-left" type="text"><button type="submit" class="btn">Search</button> 
+                            <a class="advanced" href="#">Advanced</a>
+                            <a class="export" href="#">Export</a>
+                        </div>
+                        <div class="table-pager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+    </div>
+</div>
+
+<script id="searchTemplate" type="text/html">
+    <h4>Advanced Search</h4>
+    <form class="form-horizontal form-modal">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Date Range</label>
+            <div class="col-md-7">
+                <input class="form-control date-range" name="OrderDateRange" type="text" value="{{OrderDateRange}}" />
+                <input type="hidden" name="StartDate" value="{{StartDate}}" />
+                <input type="hidden" name="EndDate" value="{{EndDate}}" />
+                <i class="icon-inline icon-calendar"></i>
+            </div>
+        </div>
+    </form>
+</script>
+
+<script id="orderRowTemplate" type="text/html">
+    {{#Orders}}
+    <tr class="order-row-{{OrderId}}">
+        <td>{{toDateTime OrderDate}}</td>
+        <td>{{FirstName}}</td>
+        <td>{{LastName}}</td>
+        <td class="align-right">${{toCurrency Total}}</td>
+        <td>
+            {{#is Status 2}}
+                <a class="label label-warning" title="Order has been partially paid and is waiting for remaining balance.">{{StatusDescription}}</a>
+            {{/is}}
+            
+            {{#is Status 3}}
+                <a class="label label-success" title="Order has been paid and is awaiting confirmation on the network.">{{StatusDescription}}</a>
+            {{/is}}
+            
+            {{#is Status 4}}
+                <a class="label label-info" title="Order has been paid and payment has been sent to you.">{{StatusDescription}}</a>
+            {{/is}}
+            
+            {{#is Status 5}}
+                <a class="label label-warning" title="Order has expired.">{{StatusDescription}}</a>
+            {{/is}}
+            
+            {{#is Status 6}}
+                <a class="label label-danger" title="Payment has been refunded.">{{StatusDescription}}</a>
+            {{/is}}
+            
+            {{#is Status 7}}
+                <a class="label label-success" title="Payment has been confirmed by the network and payout will be sent shortly.">{{StatusDescription}}</a>
+            {{/is}}
+        </td>
+        <td class="align-center">
+            <a href="@Url.Action("Details", "Order")?id={{OrderId}}" title="View order"><i class="glyphicon glyphicon-search" /></a>
+        </td>
+    </tr>  
+    {{/Orders}}
+</script>
+
+@section scripts {
+    <script type="text/javascript">
+        ($(function () {
+
+            var orderFilter = new SearchFilter();
+            orderFilter.Report = "gratuity";
+            orderFilter.SortColumn = "OrderDate";
+            orderFilter.SortDirection = "Descending";
+            var order = new Order();
+            var orderTable = $('#orderTable');
+
+            // Order list rendering
+            order.subscribe(order.ORDER_LIST, function (resp) {
+                if (resp.Orders.length > 0) {
+                    var html = Bitsie.Shop.Template('#orderRowTemplate', resp);
+                    $('tbody', orderTable).html(html);
+                    dataTable.update(resp.CurrentPage, resp.NumPages);
+                } else {
+                    dataTable.empty('No gratuity payments found.');
+                }
+            });
+
+            // Init table
+            var dataTable = new DataTable(orderTable, orderFilter, order, function () {
+                $('.date-range').daterangepicker({
+                    ranges: Bitsie.Shop.Config.dateRanges
+                },
+                function (start, end) {
+                    $('.modal input[name="StartDate"]').val(start.format("YYYY-MM-DD"));
+                    $('.modal input[name="EndDate"]').val(end.format("YYYY-MM-DD"));
+                });
+            });
+
+        }));
+    </script>
+} 

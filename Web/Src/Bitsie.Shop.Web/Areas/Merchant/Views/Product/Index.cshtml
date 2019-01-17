@@ -1,0 +1,56 @@
+@model Bitsie.Shop.Web.Models.BaseMerchantViewModel
+@{
+    ViewBag.Title = "Not Available";
+}
+<div class="page @if (Model.IsMobile){<text>mobile-merchant col-sm-12</text>}">
+    <div class="container-full background-white merchant-header">
+
+         @if (!String.IsNullOrEmpty(Model.Merchant.Settings.LogoUrl) && !Model.IsMobile)
+        {
+            <h1 id="header"><img src="@Model.Merchant.Settings.LogoUrl" alt="" /></h1>
+        }  else {
+            <div class="screen-title">
+                <h1 class="default-merchant-header">@Model.Merchant.Settings.StoreTitle</h1>
+            </div>
+         }
+
+        <table id="products" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th class="align-right">Price</th>
+                    <th class="col-xs-1"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script id="productRowTemplate" type="text/html">
+    {{#Products}}
+        <tr>
+            <td>{{Title}}</td>
+            <td class="align-right">${{toCurrency Price}}</td>
+            <td><a class="btn btn-success btn-sm" href="/@Model.Merchant.MerchantId/product/view/{{ProductId}}">Details</a></td>
+        </tr>
+    {{/Products}}
+</script>
+
+<script>
+    $(function () {
+        var productFilter = new SearchFilter();
+        productFilter.NumPerPage = 10000;
+        productFilter.MerchantId = '@Model.Merchant.MerchantId';
+        var productTable = $('#products');
+        var product = new Product();
+
+        product.subscribe(product.MESSAGE_LIST, function (resp) {
+            var html = Bitsie.Shop.Template('#productRowTemplate', resp);
+            $('tbody', productTable).html(html);
+        });
+
+        product.get(productFilter);
+
+    });
+</script>
